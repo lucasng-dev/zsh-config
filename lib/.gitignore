@@ -1,0 +1,10 @@
+/.*
+!/.gitignore
+# Zsh
+!/.zlogin
+!/.zlogout
+!/.zprofile
+!/.zshenv
+!/.zshrc
+# Prezto
+!/.zpreztorc
