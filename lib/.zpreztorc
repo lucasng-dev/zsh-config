@@ -1,0 +1,43 @@
+### check ###
+if [[ -z "${ZDOTDIR:-}" ]]; then
+  return 1
+fi
+
+### prezto: https://github.com/sorin-ionescu/prezto/blob/master/runcoms/zpreztorc ###
+source "$ZDOTDIR/.zprezto/runcoms/zpreztorc"
+
+### project ###
+
+# modules: https://github.com/sorin-ionescu/prezto/tree/master/modules#modules
+zstyle ':prezto:load' pmodule-dirs "$ZDOTDIR/modules"
+zstyle ':prezto:load' pmodule \
+  'environment' \
+  '_tmuxremote' \
+  'terminal' \
+  'editor' \
+  'directory' \
+  'archive' \
+  'git' \
+  '_single-tab-complete' \
+  '_aliases' \
+  '_node' \
+  '_rust' \
+  'spectrum' \
+  'utility' \
+  'completion' \
+  'history-substring-search' \
+  '_starship'
+
+# editor: https://github.com/sorin-ionescu/prezto/tree/master/modules/editor#editor
+zstyle ':prezto:module:editor' dot-expansion 'yes'
+
+# terminal: https://github.com/sorin-ionescu/prezto/tree/master/modules/terminal#terminal
+zstyle ':prezto:module:terminal' auto-title 'yes'
+
+# utility: https://github.com/sorin-ionescu/prezto/tree/master/modules/utility#utility
+zstyle ':prezto:module:utility' correct 'no'
+
+### local ###
+if [[ -s "$HOME/.zpreztorc" ]]; then
+  source "$HOME/.zpreztorc"
+fi

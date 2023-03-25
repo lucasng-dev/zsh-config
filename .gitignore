@@ -1,0 +1,17 @@
+# Environment
+/.env*
+!/.env.example
+# Linux
+*~
+*.swp
+.fuse_hidden*
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+[Dd]esktop.ini
+*.lnk
+# Temp
+*.log
+temp/
+tmp/
