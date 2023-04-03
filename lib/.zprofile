@@ -7,8 +7,7 @@ fi
 source "$ZDOTDIR/.zprezto/runcoms/zprofile"
 
 ### project ###
-# remove '-X' option added by prezto's 'zprofile' (restore: mouse-wheel + screen clearing)
-export LESS="${LESS/-X/}"
+#...
 
 ### local ###
 if [[ -s "$HOME/.zprofile" ]]; then
