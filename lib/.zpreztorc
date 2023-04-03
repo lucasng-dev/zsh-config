@@ -18,6 +18,7 @@ zstyle ':prezto:load' pmodule \
   'directory' \
   'archive' \
   'git' \
+  '_editor' \
   '_single-tab-complete' \
   '_aliases' \
   '_node' \
