@@ -12,7 +12,7 @@ source "$ZDOTDIR/.zprezto/runcoms/zpreztorc"
 zstyle ':prezto:load' pmodule-dirs "$ZDOTDIR/modules"
 zstyle ':prezto:load' pmodule \
   'environment' \
-  '_tmuxremote' \
+  '_tmux-ssh' \
   'terminal' \
   'editor' \
   'directory' \
