@@ -1,3 +1,5 @@
+alias c='clear'
+
 alias @zshup='zsh "$ZDOTDIR/../install.zsh"'
 
 __upgrade_cmds+=()
