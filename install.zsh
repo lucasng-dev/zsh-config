@@ -48,33 +48,24 @@ echo
 
 ### fonts ###
 echo "### FONTS INSTALL ###"
-(
-  font_files=("FiraCode.zip" "DroidSansMono.zip")
-
-  font_download_dir="$ZDOTDIR/.fonts-tmp"
-  mkdir -p "$font_download_dir"
-
-  for font_file in "${font_files[@]}"; do
-    wget --no-hsts -q --show-progress -N -P "$font_download_dir" \
-      "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font_file"
-  done
-
-  if [[ "$(uname)" == 'Darwin' ]]; then
-    font_user_dir="$HOME/Library/Fonts/zsh-config" # macOS
-  else
-    font_user_dir="$HOME/.local/share/fonts/zsh-config" # Linux
-  fi
-
-  rm -rf "$font_user_dir"
-  mkdir -p "$font_user_dir"
-
-  for font_file in "${font_files[@]}"; do
-    font_subdir_name="$(basename "$font_file" ".zip")"
-    unzip -q -o -d "$font_user_dir/$font_subdir_name" "$font_download_dir/$font_file"
-  done
-
-  rm -rf "$font_download_dir"
-)
+font_files=("FiraCode.zip" "DroidSansMono.zip")
+font_download_dir="$ZDOTDIR/.cache/fonts-download"
+mkdir -p "$font_download_dir"
+for font_file in "${font_files[@]}"; do
+  wget --no-hsts -q --show-progress -N -P "$font_download_dir" \
+    "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font_file"
+done
+if [[ "$(uname)" == 'Darwin' ]]; then
+  font_user_dir="$HOME/Library/Fonts/zsh-config" # macOS
+else
+  font_user_dir="$HOME/.local/share/fonts/zsh-config" # Linux
+fi
+rm -rf "$font_user_dir"
+mkdir -p "$font_user_dir"
+for font_file in "${font_files[@]}"; do
+  font_subdir_name="$(basename "$font_file" ".zip")"
+  unzip -q -o -d "$font_user_dir/$font_subdir_name" "$font_download_dir/$font_file"
+done
 echo "OK"
 echo
 
