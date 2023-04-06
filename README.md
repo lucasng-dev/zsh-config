@@ -27,11 +27,13 @@ The install process will update the `~/.zshenv` file, pointing to this project. 
 
 ## Update
 
-Run again the installer, or use the following command/alias:
+Use the following command/alias:
 
 ```shell
 @zshup
 ```
+
+An alternative is to run manually a `git pull` on this project folder and re-run the `install.zsh` script.
 
 ## Uninstall
 
