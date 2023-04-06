@@ -12,6 +12,14 @@ cd "$script_dir"
 ### environment ###
 ZDOTDIR="$script_dir/lib"
 
+### zsh-config ###
+echo
+echo "### ZSH-CONFIG ###"
+echo "Commit: $(git -C "$script_dir" rev-parse --short HEAD)"
+echo "Date: $(git -C "$script_dir" --no-pager log -1 --format="%cd")"
+echo "OK"
+echo
+
 ### prezto ###
 echo "### PREZTO INSTALL ###"
 ZPREZTODIR="$ZDOTDIR/.zprezto"
