@@ -9,11 +9,11 @@ if [[ -n "$DISPLAY" ]]; then
   fi
 else
   # console mode
-  if command -v nano &>/dev/null; then
-    export EDITOR="$(command -v nano)"
-    export VISUAL="$EDITOR"
-  elif command -v vim &>/dev/null; then
+  if command -v vim &>/dev/null; then
     export EDITOR="$(command -v vim)"
+    export VISUAL="$EDITOR"
+  elif command -v nano &>/dev/null; then
+    export EDITOR="$(command -v nano)"
     export VISUAL="$EDITOR"
   fi
 fi
