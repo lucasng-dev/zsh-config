@@ -1,6 +1,6 @@
 alias c='clear'
 
-alias @zshup='zsh "$ZDOTDIR/../install.zsh"'
+alias @zshup='git -C "$ZDOTDIR/.." pull >/dev/null; zsh "$ZDOTDIR/../install.zsh"'
 
 __upgrade_cmds+=()
 if command -v dnf &>/dev/null; then

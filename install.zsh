@@ -12,37 +12,27 @@ cd "$script_dir"
 ### environment ###
 ZDOTDIR="$script_dir/lib"
 
-### pull ###
-echo "### GIT PULL ###"
-git pull
-echo "OK"
-echo
-
 ### prezto ###
 echo "### PREZTO INSTALL ###"
-if [[ ! -d "$ZDOTDIR/.zprezto/.git" ]]; then
-  git clone --recursive https://github.com/sorin-ionescu/prezto.git "$ZDOTDIR/.zprezto"
+ZPREZTODIR="$ZDOTDIR/.zprezto"
+if [[ ! -d "$ZPREZTODIR/.git" ]]; then
+  git clone --recursive https://github.com/sorin-ionescu/prezto.git "$ZPREZTODIR"
 else
-  (
-    cd "$ZDOTDIR/.zprezto"
-    git pull
-    git submodule sync --recursive
-    git submodule update --init --recursive
-  )
+  git -C "$ZPREZTODIR" pull
+  git -C "$ZPREZTODIR" submodule sync --recursive
+  git -C "$ZPREZTODIR" submodule update --init --recursive
 fi
-(
-  cd "$ZDOTDIR/.zprezto"
-  echo "Commit: $(git rev-parse --short HEAD)"
-  echo "Date: $(git --no-pager log -1 --format="%cd")"
-)
+echo "Commit: $(git -C "$ZPREZTODIR" rev-parse --short HEAD)"
+echo "Date: $(git -C "$ZPREZTODIR" --no-pager log -1 --format="%cd")"
 echo "OK"
 echo
 
 ### starship ###
 echo "### STARSHIP INSTALL ###"
-mkdir -p "$ZDOTDIR/.starship"
-wget --no-hsts -q -O - https://starship.rs/install.sh | sh -s -- --bin-dir "$ZDOTDIR/.starship" -y >/dev/null
-"$ZDOTDIR/.starship/starship" --version
+STARSHIPDIR="$ZDOTDIR/.starship"
+mkdir -p "$STARSHIPDIR"
+wget --no-hsts -q -O - https://starship.rs/install.sh | sh -s -- --bin-dir "$STARSHIPDIR" -y >/dev/null
+"$STARSHIPDIR/starship" --version
 echo "OK"
 echo
 
