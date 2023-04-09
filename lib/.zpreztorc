@@ -20,7 +20,7 @@ zstyle ':prezto:load' pmodule \
   'git' \
   '_editor' \
   '_less' \
-  '_single-tab-complete' \
+  '_tab-complete' \
   '_aliases' \
   '_node' \
   '_rust' \

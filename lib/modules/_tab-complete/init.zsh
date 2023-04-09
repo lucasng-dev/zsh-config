@@ -1,4 +1,4 @@
-function single-tab-complete() {
+function __tab-complete() {
   # https://unix.stackexchange.com/a/32426
   if [[ "$BUFFER" =~ ^\\s*$ ]]; then
     BUFFER="cd "
@@ -7,5 +7,5 @@ function single-tab-complete() {
   # https://github.com/sorin-ionescu/prezto/blob/master/modules/editor/init.zsh
   expand-or-complete-with-indicator
 }
-zle -N single-tab-complete
-bindkey '^I' single-tab-complete
+zle -N __tab-complete
+bindkey '^I' __tab-complete
