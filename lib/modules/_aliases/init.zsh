@@ -3,7 +3,9 @@ alias c='clear'
 alias @zshup='git -C "$ZDOTDIR/.." pull >/dev/null; zsh "$ZDOTDIR/../install.zsh"'
 
 function __upgrade() {
-  if command -v dnf &>/dev/null; then
+  if command -v rpm-ostree &>/dev/null; then
+    echo && echo "### RPM-OSTREE ###" && rpm-ostree upgrade
+  elif command -v dnf &>/dev/null; then
     echo && echo "### DNF ###" && sudo dnf upgrade && sudo dnf autoremove -y
   elif command -v apt-get &>/dev/null; then
     echo && echo "### APT ###" && sudo apt-get update && sudo apt-get upgrade && sudo apt-get autoremove -y
