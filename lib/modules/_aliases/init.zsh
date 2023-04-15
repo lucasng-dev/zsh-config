@@ -13,7 +13,7 @@ function __upgrade() {
     echo && echo "### PACMAN ###" && sudo pacman -Syu && { sudo pacman -Qtdq | sudo pacman --noconfirm -Rns - &>/dev/null || true; }
   fi
   if command -v flatpak &>/dev/null; then
-    echo && echo "### FLATPAK ###" && sudo flatpak update && sudo flatpak uninstall --unused -y
+    echo && echo "### FLATPAK ###" && flatpak update && flatpak uninstall --unused -y
   fi
 }
 alias @upgrade="__upgrade"
