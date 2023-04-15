@@ -22,6 +22,7 @@ zstyle ':prezto:load' pmodule \
   '_less' \
   '_tab-complete' \
   '_aliases' \
+  '_container' \
   '_node' \
   '_rust' \
   'spectrum' \
