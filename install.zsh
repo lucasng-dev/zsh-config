@@ -1,27 +1,26 @@
 #!/usr/bin/env zsh
 set -eu -o pipefail
 
-### cwd ###
-script_dir="${0:a:h}"
+echo
+echo "### ZSH-CONFIG ###"
+echo
+
+script_dir="${0:A:h}"
 if [[ -z "$script_dir" || "$script_dir" == "/" || "$script_dir" == "$HOME" ]]; then
   echo "Invalid workdir '$script_dir'!" 1>&2
   return 1
 fi
 cd "$script_dir"
 
-### environment ###
 ZDOTDIR="$script_dir/lib"
 
-### zsh-config ###
-echo
-echo "### ZSH-CONFIG ###"
+echo "*** GIT INFO ***"
 echo "Commit: $(git -C "$script_dir" rev-parse --short HEAD)"
 echo "Date: $(git -C "$script_dir" --no-pager log -1 --format="%cd")"
-echo "OK"
+echo ">>> OK <<<"
 echo
 
-### prezto ###
-echo "### PREZTO INSTALL ###"
+echo "*** PREZTO INSTALL ***"
 ZPREZTODIR="$ZDOTDIR/.zprezto"
 if [[ ! -d "$ZPREZTODIR/.git" ]]; then
   git clone --recursive https://github.com/sorin-ionescu/prezto.git "$ZPREZTODIR"
@@ -32,20 +31,18 @@ else
 fi
 echo "Commit: $(git -C "$ZPREZTODIR" rev-parse --short HEAD)"
 echo "Date: $(git -C "$ZPREZTODIR" --no-pager log -1 --format="%cd")"
-echo "OK"
+echo ">>> OK <<<"
 echo
 
-### starship ###
-echo "### STARSHIP INSTALL ###"
+echo "*** STARSHIP INSTALL ***"
 STARSHIPDIR="$ZDOTDIR/.starship"
 mkdir -p "$STARSHIPDIR"
 wget --no-hsts -q -O - https://starship.rs/install.sh | sh -s -- --bin-dir "$STARSHIPDIR" -y >/dev/null
 "$STARSHIPDIR/starship" --version
-echo "OK"
+echo ">>> OK <<<"
 echo
 
-### fonts ###
-echo "### FONTS INSTALL ###"
+echo "*** FONTS INSTALL ***"
 font_files=("FiraCode.zip" "DroidSansMono.zip")
 font_download_dir="$ZDOTDIR/.cache/fonts-download"
 mkdir -p "$font_download_dir"
@@ -64,11 +61,10 @@ for font_file in "${font_files[@]}"; do
   font_subdir_name="$(basename "$font_file" ".zip")"
   unzip -q -o -d "$font_user_dir/$font_subdir_name" "$font_download_dir/$font_file"
 done
-echo "OK"
+echo ">>> OK <<<"
 echo
 
-### file '~/.zshenv' ###
-echo "### ZSH CONFIG ENABLE ###"
+echo "*** ZSH CONFIG ENABLE ***"
 touch ~/.zshenv
 sed -i '/ZDOTDIR=/d' ~/.zshenv || true
 zshenv_previous="$(cat ~/.zshenv)"
@@ -76,4 +72,5 @@ cat <<EOT >~/.zshenv
 export ZDOTDIR='$ZDOTDIR'; if [[ -s "\$ZDOTDIR/.zshenv" ]]; then source "\$ZDOTDIR/.zshenv"; fi # points to 'zsh-config' project
 $zshenv_previous
 EOT
-echo "OK"
+echo ">>> OK <<<"
+echo
