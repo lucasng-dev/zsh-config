@@ -42,25 +42,22 @@ wget --no-hsts -q -O - https://starship.rs/install.sh | sh -s -- --bin-dir "$STA
 echo ">>> OK <<<"
 echo
 
-echo "*** FONTS INSTALL ***"
-font_files=("FiraCode.zip" "DroidSansMono.zip")
+echo "*** FONT INSTALL ***"
+font_file="FiraCode.zip"
 font_download_dir="$ZDOTDIR/.cache/fonts-download"
 mkdir -p "$font_download_dir"
-for font_file in "${font_files[@]}"; do
-  wget --no-hsts -q --show-progress -N -P "$font_download_dir" \
-    "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font_file"
-done
+wget --no-hsts -q --show-progress -N -P "$font_download_dir" \
+  "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font_file"
 if [[ "$(uname)" == 'Darwin' ]]; then
-  font_user_dir="$HOME/Library/Fonts/zsh-config" # macOS
+  font_user_dir="$HOME/Library/Fonts/NerdFonts" # macOS
 else
-  font_user_dir="$HOME/.local/share/fonts/zsh-config" # Linux
+  font_user_dir="$HOME/.local/share/fonts/NerdFonts" # Linux
 fi
-rm -rf "$font_user_dir"
 mkdir -p "$font_user_dir"
-for font_file in "${font_files[@]}"; do
-  font_subdir_name="$(basename "$font_file" ".zip")"
-  unzip -q -o -d "$font_user_dir/$font_subdir_name" "$font_download_dir/$font_file"
-done
+font_subdir="$font_user_dir/$(basename "$font_file" ".zip")"
+rm -rf "$font_subdir"
+unzip -q -o -d "$font_subdir" "$font_download_dir/$font_file"
+echo "$font_subdir"
 echo ">>> OK <<<"
 echo
 

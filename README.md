@@ -2,12 +2,7 @@
 
 Basic [Zsh](https://www.zsh.org/) config, using [Prezto](https://github.com/sorin-ionescu/prezto) framework, [Starship](https://starship.rs/) prompt and some extra [modules](lib/modules).
 
-The prompt theme is based on [Nerd Font Symbols Preset](https://starship.rs/presets/nerd-font.html). The following patched [Nerd Fonts](https://www.nerdfonts.com/) are included:
-
-- [FiraCode Nerd Font](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FiraCode) _(recommended)_
-- [DroidSansMono Nerd Font](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/DroidSansMono)
-
-It is necessary to change the terminal app preferences to use a patched font, otherwise the special icons/glyphs won't be displayed.
+The prompt theme is based on [Nerd Font Symbols Preset](https://starship.rs/presets/nerd-font.html). The [FiraCode Nerd Font](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FiraCode) is included, update the terminal app preferences to use it, otherwise the special icons/glyphs won't be displayed.
 
 ## Installation
 
@@ -44,5 +39,5 @@ Update the terminal app preferences to use a normal font.
 Delete the following folders:
 
 - `~/.zsh` _(folder where the project was cloned)_
-- `~/.local/share/fonts/zsh-config` _(patched fonts on Linux)_
-- `~/Library/Fonts/zsh-config` _(patched fonts on macOS)_
+- `~/.local/share/fonts/NerdFonts/FiraCode` _(patched font on Linux)_
+- `~/Library/Fonts/NerdFonts/FiraCode` _(patched font on macOS)_
