@@ -14,6 +14,8 @@ path=(
   /usr/local/sbin(N)
   /usr/bin(N)
   /usr/sbin(N)
+  /var/lib/flatpak/exports/bin(N)
+  /snap/bin(N)
   $path
 )
 export PATH
