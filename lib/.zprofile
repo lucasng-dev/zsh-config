@@ -1,7 +1,5 @@
 ### check ###
-if [[ -z "${ZDOTDIR:-}" ]]; then
-  return 1
-fi
+if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
 
 ### prezto: https://github.com/sorin-ionescu/prezto/blob/master/runcoms/zprofile ###
 source "$ZDOTDIR/.zprezto/runcoms/zprofile"
@@ -10,6 +8,4 @@ source "$ZDOTDIR/.zprezto/runcoms/zprofile"
 #...
 
 ### local ###
-if [[ -s "$HOME/.zprofile" ]]; then
-  source "$HOME/.zprofile"
-fi
+if [[ -s ~/.zprofile ]]; then source ~/.zprofile; fi
