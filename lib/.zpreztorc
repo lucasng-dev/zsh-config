@@ -1,7 +1,5 @@
 ### check ###
-if [[ -z "${ZDOTDIR:-}" ]]; then
-  return 1
-fi
+if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
 
 ### prezto: https://github.com/sorin-ionescu/prezto/blob/master/runcoms/zpreztorc ###
 source "$ZDOTDIR/.zprezto/runcoms/zpreztorc"
@@ -41,6 +39,4 @@ zstyle ':prezto:module:terminal' auto-title 'yes'
 zstyle ':prezto:module:utility' correct 'no'
 
 ### local ###
-if [[ -s "$HOME/.zpreztorc" ]]; then
-  source "$HOME/.zpreztorc"
-fi
+if [[ -s ~/.zpreztorc ]]; then source ~/.zpreztorc; fi
