@@ -15,6 +15,9 @@ show_notifications = true
 [conda]
 symbol = " "
 
+[container]
+format = '[$symbol]($style) '
+
 [dart]
 symbol = " "
 
