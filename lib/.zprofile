@@ -31,5 +31,7 @@ export LESSHISTFILE='-' # disable history
 
 # <<< end <<<
 
-_src_user_profile() { emulate -L ksh && if [[ -s ~/.profile ]]; then source ~/.profile; fi; } && _src_user_profile && unset -f _src_user_profile
+_src_user_profile() { emulate -L ksh && if [[ -s ~/.profile ]]; then source ~/.profile; fi; }
+_src_user_profile
+unset -f _src_user_profile
 if [[ -s ~/.zprofile ]]; then source ~/.zprofile; fi
