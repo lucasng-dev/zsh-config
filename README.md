@@ -41,3 +41,17 @@ Delete the following folders:
 - `~/.zsh` _(folder where the project was cloned)_
 - `~/.local/share/fonts/NerdFonts/FiraCode` _(patched font on Linux)_
 - `~/Library/Fonts/NerdFonts/FiraCode` _(patched font on macOS)_
+
+## Custom config files
+
+These local user home files, if existent, will be loaded in the following order:
+
+| User config file     | Usage                                                   | Loaded on              |
+| -------------------- | ------------------------------------------------------- | ---------------------- |
+| `~/.zshenv`          | Setup only, points to this project, keep it as is       | All executions         |
+| `~/.profile`         | Use **`~/.zprofile`** instead                           | All executions         |
+| **`~/.zprofile`** ✅ | **Recommended**, e.g: environment variables and options | All executions         |
+| **`~/.zshrc`** ✅    | **Recommended**, e.g: aliases, functions                | Interactive shell only |
+| `~/.zprestorc`       | If necessary, allows changes on Prezto config           | Interactive shell only |
+| `~/.zlogin`          | Unusual, interactive shell, after open                  | Interactive shell only |
+| `~/.zlogout`         | Unusual, interactive shell, before exit                 | Interactive shell only |

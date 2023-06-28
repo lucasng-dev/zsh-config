@@ -1,11 +1,35 @@
-### check ###
 if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
-
-### prezto: https://github.com/sorin-ionescu/prezto/blob/master/runcoms/zprofile ###
 source "$ZDOTDIR/.zprezto/runcoms/zprofile"
 
-### project ###
-#...
+# >>> begin >>>
 
-### local ###
+# editors
+if command -v vim &>/dev/null; then
+  export EDITOR=vim
+elif command -v nano &>/dev/null; then
+  export EDITOR=nano
+fi
+export VISUAL=$EDITOR
+
+# paths
+typeset -gU cdpath fpath mailpath path
+path=(
+  ~/.local/bin(N)
+  /opt/homebrew/{,s}bin(N)
+  /var/lib/snapd/snap/bin(N)
+  /var/lib/flatpak/exports/bin(N)
+  /opt/local/{,s}bin(N)
+  /usr/local/{,s}bin(N)
+  /usr/{,s}bin(N)
+  /{,s}bin(N)
+  $path
+)
+
+# less
+export LESS=${LESS/-X/} # restore mouse-wheel + screen clearing
+export LESSHISTFILE='-' # disable history
+
+# <<< end <<<
+
+_src_user_profile() { emulate -L ksh && if [[ -s ~/.profile ]]; then source ~/.profile; fi; } && _src_user_profile && unset -f _src_user_profile
 if [[ -s ~/.zprofile ]]; then source ~/.zprofile; fi
