@@ -6,7 +6,7 @@ echo '### ZSH-CONFIG ###'
 echo
 
 script_dir=${0:A:h}
-if [[ -z "$script_dir" || "$script_dir" == '/' || "$script_dir" == ~ ]]; then
+if [[ -z "$script_dir" ]] || [[ "$script_dir" == '/' ]] || [[ "$script_dir" == ~ ]]; then
   echo "Invalid workdir '$script_dir'!" 1>&2
   return 1
 fi
@@ -37,7 +37,7 @@ echo
 echo '*** STARSHIP INSTALL ***'
 STARSHIPDIR=$ZDOTDIR/.starship
 mkdir -p "$STARSHIPDIR"
-wget --no-hsts -q -O - https://starship.rs/install.sh | sh -s -- --bin-dir "$STARSHIPDIR" -y >/dev/null
+wget --no-hsts --no-verbose -O - https://starship.rs/install.sh | sh -s -- --bin-dir "$STARSHIPDIR" -y >/dev/null
 "$STARSHIPDIR/starship" --version
 echo '>>> OK <<<'
 echo
@@ -46,7 +46,7 @@ echo '*** FONT INSTALL ***'
 font_file=FiraCode.zip
 font_download_dir=$ZDOTDIR/.cache/fonts-download
 mkdir -p "$font_download_dir"
-wget --no-hsts -q --show-progress -N -P "$font_download_dir" \
+wget --no-hsts --no-verbose --show-progress -N -P "$font_download_dir" \
   "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font_file"
 if [[ "$(uname)" == 'Darwin' ]]; then
   font_user_dir=~/Library/Fonts/NerdFonts # macOS
@@ -66,7 +66,7 @@ touch ~/.zshenv
 sed -i '/ZDOTDIR=/d' ~/.zshenv || true
 zshenv_previous=$(cat ~/.zshenv)
 cat <<EOT >~/.zshenv
-export ZDOTDIR='$ZDOTDIR'; if [[ -s "\$ZDOTDIR/.zshenv" ]]; then source "\$ZDOTDIR/.zshenv"; fi # points to 'zsh-config' project
+export ZDOTDIR='$ZDOTDIR' && if [[ -s "\$ZDOTDIR/.zshenv" ]]; then source "\$ZDOTDIR/.zshenv"; fi # points to 'zsh-config' project
 $zshenv_previous
 EOT
 echo '>>> OK <<<'

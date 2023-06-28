@@ -1,36 +1,31 @@
-### check ###
 if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
-
-### prezto: https://github.com/sorin-ionescu/prezto/blob/master/runcoms/zpreztorc ###
 source "$ZDOTDIR/.zprezto/runcoms/zpreztorc"
 
-### project ###
+# >>> begin >>>
 
 # modules: https://github.com/sorin-ionescu/prezto/tree/master/modules#modules
 zstyle ':prezto:load' pmodule-dirs "$ZDOTDIR/modules"
 zstyle ':prezto:load' pmodule \
-  'environment' \
   '_tmux-ssh' \
+  'environment' \
   'terminal' \
   'editor' \
   'directory' \
   'archive' \
   'git' \
-  '_editor' \
-  '_less' \
-  '_tab-complete' \
-  '_aliases' \
-  '_container' \
-  '_node' \
-  '_rust' \
   'spectrum' \
   'utility' \
   'completion' \
   'history-substring-search' \
+  '_commands' \
+  '_tab-complete' \
   '_starship'
 
 # editor: https://github.com/sorin-ionescu/prezto/tree/master/modules/editor#editor
 zstyle ':prezto:module:editor' dot-expansion 'yes'
+
+# git: https://github.com/sorin-ionescu/prezto/tree/master/modules/git#git
+zstyle ':prezto:module:git:alias' skip 'yes'
 
 # terminal: https://github.com/sorin-ionescu/prezto/tree/master/modules/terminal#terminal
 zstyle ':prezto:module:terminal' auto-title 'yes'
@@ -38,5 +33,6 @@ zstyle ':prezto:module:terminal' auto-title 'yes'
 # utility: https://github.com/sorin-ionescu/prezto/tree/master/modules/utility#utility
 zstyle ':prezto:module:utility' correct 'no'
 
-### local ###
+# <<< end <<<
+
 if [[ -s ~/.zpreztorc ]]; then source ~/.zpreztorc; fi

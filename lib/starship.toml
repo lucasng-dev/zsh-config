@@ -9,9 +9,6 @@ symbol = " "
 [c]
 symbol = " "
 
-[cmd_duration]
-show_notifications = true
-
 [conda]
 symbol = " "
 
