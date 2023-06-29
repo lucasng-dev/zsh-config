@@ -78,7 +78,8 @@ elif [[ "$host_uses_toolbox" ]]; then
 else
   function __box_create() {
     __box_exists &>/dev/null && echo 'Container already exists!' 1>&2 && return 1
-    @host distrobox create -Y --no-entry -i registry.fedoraproject.org/fedora-toolbox:38 -n fedora-toolbox && __box_upgrade && __box_enter
+    @host distrobox create -Y --no-entry -i registry.fedoraproject.org/fedora-toolbox:38 -n fedora-toolbox \
+      --additional-flags "--hostname '$(@host uname -n)'" && __box_upgrade && __box_enter
   }
 fi
 
@@ -160,8 +161,8 @@ EOF
     __box_run sudo dnf upgrade -y
     __box_run sudo dnf install -y \
       bat direnv exa git git-lfs htop jq neofetch net-tools \
-      openssl p7zip p7zip-plugins tldr tmux traceroute vim \
-      xclip xsel wl-clipboard zsh
+      openssl p7zip p7zip-plugins tldr tmux traceroute unzip \
+      vim xclip xsel wl-clipboard zip zsh
     __box_run sudo usermod --shell /usr/bin/zsh "$(id -nu)"
     echo '>>> OK <<<'
     echo
