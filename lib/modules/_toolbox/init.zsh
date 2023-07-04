@@ -175,18 +175,18 @@ EOF
     fi
 
     echo '*** REDIRECT HOST COMMANDS ***'
-    local bin_dir=/usr/local/bin
+    local spawn_dir=/usr/local/bin
     local spawn_file
     spawn_file=host-spawn-$(uname -m)
-    __box_run sudo wget --no-hsts --no-verbose --show-progress -N -P "$bin_dir" \
+    __box_run sudo wget --no-hsts --no-verbose --show-progress -N -P "$spawn_dir" \
       "https://github.com/1player/host-spawn/releases/latest/download/$spawn_file"
-    __box_run sudo chmod +x "$bin_dir/$spawn_file"
-    __box_run sudo ln -srfT "$bin_dir/$spawn_file" "$bin_dir/host-spawn"
+    __box_run sudo chmod +x "$spawn_dir/$spawn_file"
+    __box_run sudo ln -srfT "$spawn_dir/$spawn_file" "$spawn_dir/host-spawn"
     local host_cmd
     for host_cmd in xdg-open docker docker-compose podman podman-compose flatpak; do
       if @host command -pv "$host_cmd" &>/dev/null; then
         echo "command: $host_cmd"
-        __box_run sudo ln -srfT "$bin_dir/$spawn_file" "$bin_dir/$host_cmd"
+        __box_run sudo ln -srfT "$spawn_dir/$spawn_file" "$spawn_dir/$host_cmd"
       fi
     done
     echo '>>> OK <<<'
