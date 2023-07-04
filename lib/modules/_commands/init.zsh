@@ -33,4 +33,15 @@ function @upgrade() {
   if command -v flatpak &>/dev/null; then
     echo && echo '### FLATPAK ###' && sudo flatpak update && sudo flatpak uninstall --unused -y
   fi
+  if command -v snap &>/dev/null; then
+    echo && echo '### SNAP ###' && sudo snap refresh && (
+      # shellcheck disable=SC2034
+      LANG=C snap list --all |
+        while read -r name version rev tracking publisher notes; do
+          if [[ "$notes" == *disabled* ]]; then
+            sudo snap remove "$name" --revision="$rev"
+          fi
+        done
+    )
+  fi
 }
