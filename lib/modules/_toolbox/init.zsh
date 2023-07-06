@@ -171,7 +171,7 @@ EOF
       bat direnv exa git git-lfs htop jq neofetch net-tools \
       openssl p7zip p7zip-plugins tldr tmux traceroute unzip \
       vim xclip xsel wl-clipboard zip zsh
-    __box_run sudo usermod --shell /usr/bin/zsh "$(__box_run id -nu)"
+    __box_run sudo usermod --shell /usr/bin/zsh "$(id -nu)"
     echo '>>> OK <<<'
     echo
 
@@ -186,7 +186,7 @@ EOF
       echo '*** REDIRECT HOST COMMANDS ***'
       local host_cmd
       for host_cmd in xdg-open docker docker-compose podman podman-compose flatpak; do
-        if @host command -v "$host_cmd" &>/dev/null; then
+        if @host command -pv "$host_cmd" &>/dev/null; then
           echo "command: $host_cmd"
           __box_run sudo ln -sfT /usr/bin/distrobox-host-exec "/usr/local/bin/$host_cmd"
         fi
