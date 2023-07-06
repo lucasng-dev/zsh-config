@@ -32,7 +32,7 @@ else
 fi
 
 # detect: container managers
-if @host command -pv toolbox &>/dev/null; then host_uses_distrobox=true; else host_uses_distrobox=''; fi
+if @host command -pv distrobox &>/dev/null; then host_uses_distrobox=true; else host_uses_distrobox=''; fi
 if @host command -pv podman &>/dev/null; then host_uses_podman=true; else host_uses_podman=''; fi
 
 # __box_help
