@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+
 if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
 source "$ZDOTDIR/.zprezto/runcoms/zpreztorc"
 
@@ -17,8 +19,8 @@ zstyle ':prezto:load' pmodule \
   'utility' \
   'completion' \
   'history-substring-search' \
-  '_commands' \
   '_toolbox' \
+  '_commands' \
   '_direnv' \
   '_tab-complete' \
   '_starship'

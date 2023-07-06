@@ -1,19 +1,39 @@
 {
-  "editor.formatOnSave": true,
-  "editor.tabSize": 2,
-  "editor.insertSpaces": true,
-  "files.eol": "\n",
-  "files.encoding": "utf8",
-  "files.trimTrailingWhitespace": true,
-  "files.trimFinalNewlines": true,
-  "files.insertFinalNewline": true,
+  // editor
   "editor.defaultFormatter": null,
+  "editor.formatOnSave": true,
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+
+  // files
+  "files.encoding": "utf8",
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.readonlyInclude": { "**/.zprezto/**": true },
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+
+  // git
+  "git.autofetch": true,
+  "git.detectSubmodules": false,
+  "scm.defaultViewMode": "tree",
+
+  // formatters
+  "editor.codeActionsOnSave": { "source.fixAll": true },
+  "prettier.useEditorConfig": true,
   "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[shellscript]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
   "[toml]": { "editor.defaultFormatter": "tamasfe.even-better-toml" },
-  "git.autofetch": true,
-  "git.detectSubmodules": false,
-  "scm.defaultViewMode": "tree"
+  "[yaml]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+  // shell
+  "shellcheck.ignorePatterns": {
+    "**/*.zlogout": false,
+    "**/*.zprofile": false,
+    "**/*.zsh": false,
+    "**/*.zshenv": false,
+    "**/*.zshrc": false
+  }
 }

@@ -1,10 +1,11 @@
 {
   "recommendations": [
+    "bmalehorn.shell-syntax",
     "editorconfig.editorconfig",
     "esbenp.prettier-vscode",
-    "yzhang.markdown-all-in-one",
     "foxundermoon.shell-format",
-    "bmalehorn.shell-syntax",
-    "tamasfe.even-better-toml"
+    "tamasfe.even-better-toml",
+    "timonwong.shellcheck",
+    "yzhang.markdown-all-in-one"
   ]
 }
