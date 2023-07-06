@@ -26,12 +26,12 @@ else
 fi
 
 # detect: container managers
-if @host command -pv toolbox &>/dev/null; then host_uses_toolbox=true; else host_uses_toolbox=''; fi
+if @host command -pv toolbox &>/dev/null; then host_uses_distrobox=true; else host_uses_distrobox=''; fi
 if @host command -pv podman &>/dev/null; then host_uses_podman=true; else host_uses_podman=''; fi
 
 # __box_help
 function __box_help() {
-  \cat <<EOF
+  command cat <<EOF
 
 Create a toolbox/distrobox container using a Fedora image with some opinionated defaults.
 
@@ -70,35 +70,35 @@ fi
 # __box_create
 if [[ "$box_is_container" ]]; then
   function __box_create() { echo "Command 'create' unavailable on toolbox container!" 1>&2 && return 1; }
-elif [[ "$host_uses_toolbox" ]]; then
-  function __box_create() {
-    __box_exists &>/dev/null && echo 'Container already exists!' 1>&2 && return 1
-    @host toolbox -y create -i registry.fedoraproject.org/fedora-toolbox:38 fedora-toolbox && __box_upgrade && __box_enter
-  }
-else
+elif [[ "$host_uses_distrobox" ]]; then
   function __box_create() {
     __box_exists &>/dev/null && echo 'Container already exists!' 1>&2 && return 1
     @host distrobox create -Y --no-entry -i registry.fedoraproject.org/fedora-toolbox:38 -n fedora-toolbox \
       --additional-flags "--hostname '$(@host uname -n)'" && __box_upgrade && __box_enter
+  }
+else
+  function __box_create() {
+    __box_exists &>/dev/null && echo 'Container already exists!' 1>&2 && return 1
+    @host toolbox -y create -i registry.fedoraproject.org/fedora-toolbox:38 fedora-toolbox && __box_upgrade && __box_enter
   }
 fi
 
 # __box_enter
 if [[ "$box_is_container" ]]; then
   function __box_enter() { true; }
-elif [[ "$host_uses_toolbox" ]]; then
-  function __box_enter() { @host toolbox enter -c fedora-toolbox; }
-else
+elif [[ "$host_uses_distrobox" ]]; then
   function __box_enter() { __box_exists && @host distrobox enter fedora-toolbox -- /usr/bin/zsh -l; }
+else
+  function __box_enter() { @host toolbox enter -c fedora-toolbox; }
 fi
 
 # __box_run
 if [[ "$box_is_container" ]]; then
   function __box_run() { "$@"; }
-elif [[ "$host_uses_toolbox" ]]; then
-  function __box_run() { @host toolbox run -c fedora-toolbox "$@"; }
-else
+elif [[ "$host_uses_distrobox" ]]; then
   function __box_run() { __box_exists && @host distrobox enter fedora-toolbox -- "$@"; }
+else
+  function __box_run() { @host toolbox run -c fedora-toolbox "$@"; }
 fi
 
 # __box_stats
@@ -118,28 +118,28 @@ fi
 # __box_stop
 if [[ "$box_is_container" ]]; then
   function __box_stop() { echo "Command 'stop' unavailable on toolbox container!" 1>&2 && return 1; }
-elif [[ "$host_uses_toolbox" ]]; then
+elif [[ "$host_uses_distrobox" ]]; then
+  function __box_stop() { @host distrobox stop -Y fedora-toolbox; }
+else
   if [[ "$host_uses_podman" ]]; then
     function __box_stop() { @host podman container stop fedora-toolbox; }
   else
     function __box_stop() { @host docker container stop fedora-toolbox; }
   fi
-else
-  function __box_stop() { @host distrobox stop -Y fedora-toolbox; }
 fi
 
 # __box_rm
 if [[ "$box_is_container" ]]; then
   function __box_rm() { echo "Command 'rm' unavailable on toolbox container!" 1>&2 && return 1; }
-elif [[ "$host_uses_toolbox" ]]; then
+elif [[ "$host_uses_distrobox" ]]; then
   function __box_rm() {
     __box_stop &>/dev/null || true
-    @host toolbox rm -f fedora-toolbox
+    @host distrobox rm -f fedora-toolbox
   }
 else
   function __box_rm() {
     __box_stop &>/dev/null || true
-    @host distrobox rm -f fedora-toolbox
+    @host toolbox rm -f fedora-toolbox
   }
 fi
 
