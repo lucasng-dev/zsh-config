@@ -5,7 +5,7 @@ alias x='exit'
 alias s='ssh'
 alias g='git'
 
-alias less='less -R'
+alias ping='ping -O'
 
 if command -v bat &>/dev/null; then
   alias cat='bat'
@@ -16,6 +16,13 @@ if command -v exa &>/dev/null; then
   alias l='ls -1a'
   alias ll='ls -l'
   alias la='ls -la'
+fi
+
+if ! command -v docker &>/dev/null && command -v podman &>/dev/null; then
+  alias docker='podman'
+fi
+if ! command -v docker-compose &>/dev/null && command -v podman-compose &>/dev/null; then
+  alias docker-compose='podman-compose'
 fi
 
 function @upgrade() {
