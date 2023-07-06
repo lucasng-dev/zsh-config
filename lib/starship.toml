@@ -147,9 +147,6 @@ symbol = " "
 [scala]
 symbol = " "
 
-[shlvl]
-disabled = false
-
 [spack]
 symbol = "🅢 "
 
