@@ -186,7 +186,7 @@ EOF
       for host_cmd in xdg-open docker docker-compose podman podman-compose flatpak; do
         if @host command -pv "$host_cmd" &>/dev/null; then
           echo "command: $host_cmd"
-          __box_run sudo ln -srfT /usr/bin/distrobox-host-exec /usr/local/bin/$host_cmd
+          __box_run sudo ln -sfT /usr/bin/distrobox-host-exec /usr/local/bin/$host_cmd
         fi
       done
       echo '>>> OK <<<'
