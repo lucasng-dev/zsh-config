@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+
 if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
 source "$ZDOTDIR/.zprezto/runcoms/zprofile"
 
@@ -12,7 +14,9 @@ fi
 export VISUAL=$EDITOR
 
 # paths
+# shellcheck disable=SC2034
 typeset -gU cdpath fpath mailpath path
+# shellcheck disable=SC1036,SC2206
 path=(
   ~/.local/bin(N)
   /opt/homebrew/{,s}bin(N)

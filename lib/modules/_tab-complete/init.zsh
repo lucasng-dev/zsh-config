@@ -1,7 +1,10 @@
+# shellcheck shell=bash
+
 function __tab-complete() {
   # https://unix.stackexchange.com/a/32426
   if [[ "$BUFFER" =~ ^\\s*$ ]]; then
     BUFFER='cd '
+    # shellcheck disable=SC2034
     CURSOR=3
   fi
   # https://github.com/sorin-ionescu/prezto/blob/master/modules/editor/init.zsh

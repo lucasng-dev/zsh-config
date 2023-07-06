@@ -1,0 +1,4 @@
+enable=check-unassigned-uppercase
+enable=quote-safe-variables
+external-sources=true
+disable=SC1090,SC1094
