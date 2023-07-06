@@ -34,8 +34,8 @@ else
 fi
 
 # detect: container managers
-if @host command -pv distrobox &>/dev/null; then box_uses_distrobox=true; else box_uses_distrobox=''; fi
-if @host command -pv podman &>/dev/null; then box_uses_podman=true; else box_uses_podman=''; fi
+if @host command -v distrobox &>/dev/null; then box_uses_distrobox=true; else box_uses_distrobox=''; fi
+if @host command -v podman &>/dev/null; then box_uses_podman=true; else box_uses_podman=''; fi
 
 # __box_help
 function __box_help() {
@@ -186,7 +186,7 @@ EOF
       echo '*** REDIRECT HOST COMMANDS ***'
       local host_cmd
       for host_cmd in xdg-open docker docker-compose podman podman-compose flatpak; do
-        if @host command -pv "$host_cmd" &>/dev/null; then
+        if @host command -v "$host_cmd" &>/dev/null; then
           echo "command: $host_cmd"
           __box_run sudo ln -sfT /usr/bin/distrobox-host-exec "/usr/local/bin/$host_cmd"
         fi
