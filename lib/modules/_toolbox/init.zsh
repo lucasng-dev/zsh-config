@@ -199,4 +199,4 @@ EOF
 }
 
 # cleanup
-unset box_is_container box_uses_{toolbox,podman}
+unset box_is_container box_uses_{distrobox,podman}
