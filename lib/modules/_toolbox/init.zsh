@@ -182,7 +182,7 @@ EOF
       echo
     fi
 
-    if [[ -x /usr/bin/distrobox-host-exec ]]; then
+    if __box_run test -x /usr/bin/distrobox-host-exec; then
       echo '*** REDIRECT HOST COMMANDS ***'
       __box_run /usr/bin/distrobox-host-exec -Y true
       local host_cmd
