@@ -182,8 +182,9 @@ EOF
       echo
     fi
 
-    if __box_run /usr/bin/distrobox-host-exec -Y true &>/dev/null; then
+    if [[ -x /usr/bin/distrobox-host-exec ]]; then
       echo '*** REDIRECT HOST COMMANDS ***'
+      __box_run /usr/bin/distrobox-host-exec -Y true
       local host_cmd
       for host_cmd in xdg-open docker docker-compose podman podman-compose flatpak; do
         if @host command -pv "$host_cmd" &>/dev/null; then
