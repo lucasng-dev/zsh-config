@@ -22,13 +22,11 @@ function @box() {
 
 # @host
 if [[ -n "$box_is_container" ]]; then
-  function @host() {
-    if [[ -x /usr/bin/distrobox-host-exec ]]; then
-      /usr/bin/distrobox-host-exec "$@"
-    else
-      /usr/bin/flatpak-spawn --host "$@"
-    fi
-  }
+  if [[ -x /usr/bin/distrobox-host-exec ]]; then
+    function @host() { /usr/bin/distrobox-host-exec "$@"; }
+  else
+    function @host() { /usr/bin/flatpak-spawn --host "$@"; }
+  fi
 else
   function @host() { "$@"; }
 fi
