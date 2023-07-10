@@ -173,16 +173,9 @@ EOF
     echo '>>> OK <<<'
     echo
 
-    if [[ -s ~/.box ]]; then
-      echo '*** PROVISIONING SCRIPT ***'
-      __box_run /usr/bin/zsh -euxf -o pipefail ~/.box
-      echo '>>> OK <<<'
-      echo
-    fi
-
     if __box_run test -x /usr/bin/distrobox-host-exec; then
       echo '*** REDIRECT HOST COMMANDS ***'
-      __box_run /usr/bin/distrobox-host-exec -Y true
+      __box_run /usr/bin/distrobox-host-exec -Y true # download host-spawn
       local host_cmd
       for host_cmd in xdg-open docker docker-compose podman podman-compose flatpak; do
         if @host zsh -c "command -v '$host_cmd'" &>/dev/null; then
@@ -190,6 +183,13 @@ EOF
           __box_run sudo ln -sfT /usr/bin/distrobox-host-exec "/usr/local/bin/$host_cmd"
         fi
       done
+      echo '>>> OK <<<'
+      echo
+    fi
+
+    if [[ -s ~/.box ]]; then
+      echo '*** PROVISIONING SCRIPT ***'
+      __box_run /usr/bin/zsh -euxf -o pipefail ~/.box
       echo '>>> OK <<<'
       echo
     fi
