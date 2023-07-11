@@ -21,6 +21,10 @@ if command -v exa &>/dev/null; then
   alias la='ls -la'
 fi
 
+if command -v jq &>/dev/null; then
+  alias jq='jq -C'
+fi
+
 if ! command -v docker &>/dev/null && command -v podman &>/dev/null; then
   alias docker='podman'
 fi
@@ -29,6 +33,10 @@ if ! command -v docker-compose &>/dev/null && command -v podman-compose &>/dev/n
 fi
 
 function @upgrade() {
+  if [[ -f /run/.containerenv ]] || [[ -f /.dockerenv ]]; then
+    echo && echo '### TOOLBOX ###' && @box upgrade
+    return $?
+  fi
   if command -v rpm-ostree &>/dev/null; then
     echo && echo '### RPM-OSTREE ###' && sudo rpm-ostree upgrade
   elif command -v dnf &>/dev/null; then
