@@ -1,5 +1,3 @@
-# shellcheck shell=bash
-
 # shellcheck disable=SC2154
 alias @zshup='git -C "$ZDOTDIR/.." pull >/dev/null; zsh "$ZDOTDIR/../install.zsh"'
 
