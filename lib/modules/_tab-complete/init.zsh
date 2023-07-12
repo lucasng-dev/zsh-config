@@ -1,5 +1,3 @@
-# shellcheck shell=bash
-
 function __tab-complete() {
   # https://unix.stackexchange.com/a/32426
   if [[ "$BUFFER" =~ ^\\s*$ ]]; then

@@ -1,3 +1,4 @@
+shell=bash
 enable=check-unassigned-uppercase
 enable=quote-safe-variables
 external-sources=true

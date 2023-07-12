@@ -1,5 +1,3 @@
-# shellcheck shell=bash
-
 # detect: host or container
 if [[ -f /run/.containerenv ]] || [[ -f /.dockerenv ]]; then box_is_container=true; else box_is_container=''; fi
 

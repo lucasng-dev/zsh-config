@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-# shellcheck shell=bash
 set -eu -o pipefail
 
 echo
