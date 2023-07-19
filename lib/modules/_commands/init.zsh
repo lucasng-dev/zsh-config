@@ -19,6 +19,10 @@ if command -v exa &>/dev/null; then
   alias la='ls -la'
 fi
 
+if command -v mc &>/dev/null; then
+  alias mc='mc -u'
+fi
+
 if command -v jq &>/dev/null; then
   alias jq='jq -C'
 fi
