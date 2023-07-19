@@ -164,9 +164,9 @@ gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
     __box_run sudo dnf upgrade -y
     __box_run sudo dnf install -y \
-      bat direnv exa git git-lfs htop jq neofetch net-tools \
-      openssl p7zip p7zip-plugins tldr tmux traceroute unzip \
-      vim xclip xsel wl-clipboard zip zsh
+      bat btop curl direnv exa git git-lfs htop jq mc neofetch net-tools \
+      openssl p7zip p7zip-plugins speedtest-cli telnet tldr tmux \
+      traceroute unzip vim xclip xsel wget wl-clipboard zip zsh
     __box_run sudo usermod --shell /usr/bin/zsh "$(id -nu)"
     echo '>>> OK <<<'
     echo
