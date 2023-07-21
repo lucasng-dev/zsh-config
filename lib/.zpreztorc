@@ -17,7 +17,7 @@ zstyle ':prezto:load' pmodule \
   'utility' \
   'completion' \
   'history-substring-search' \
-  '_toolbox' \
+  '_distrobox' \
   '_commands' \
   '_direnv' \
   '_tab-complete' \

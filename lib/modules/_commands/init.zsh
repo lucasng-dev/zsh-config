@@ -36,7 +36,7 @@ fi
 
 function @upgrade() {
   if [[ -f /run/.containerenv ]] || [[ -f /.dockerenv ]]; then
-    echo && echo '### TOOLBOX ###' && @box upgrade
+    echo && echo '### DISTROBOX ###' && @box upgrade
     return $?
   fi
   if command -v rpm-ostree &>/dev/null; then
