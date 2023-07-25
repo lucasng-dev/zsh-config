@@ -1,2 +1,2 @@
 if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
-source "$ZDOTDIR/.zprezto/runcoms/zshenv"
+SHLVL=1 source "$ZDOTDIR/.zprezto/runcoms/zshenv"
