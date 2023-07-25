@@ -68,8 +68,9 @@ fi
 if [[ -n "$__is_host" ]]; then
   function __box_create() {
     __box_exists &>/dev/null && echo 'Container already exists!' 1>&2 && return 1
-    @host distrobox-create -Y --no-entry -i registry.fedoraproject.org/fedora-toolbox:38 -n distrobox \
-      --additional-flags "--hostname '$(@host uname -n)'" && __box_upgrade && __box_enter
+    @host distrobox-create -Y --no-entry -i quay.io/toolbx-images/archlinux-toolbox:latest -n distrobox \
+      --additional-flags "--hostname '$(@host uname -n)'" \
+      --additional-packages 'base-devel bat git zsh' && __box_upgrade && __box_enter
   }
 else
   function __box_create() { echo "Command 'create' unavailable on distrobox container!" 1>&2 && return 1; }
@@ -125,29 +126,48 @@ function __box_upgrade() {
   (
     set -eu -o pipefail
 
+    # init  container
+    __box_run echo
+
+    echo '*** ZSH ***'
+    __box_run sudo usermod --shell /usr/bin/zsh "$(id -nu)" >/dev/null
+    echo '>>> OK <<<'
     echo
-    echo '*** BASIC SETUP ***'
-    __box_run sudo tee /etc/yum.repos.d/vscode.repo >/dev/null <<EOF
-[code]
-name=Visual Studio Code
-baseurl=https://packages.microsoft.com/yumrepos/vscode
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.microsoft.com/keys/microsoft.asc
-EOF
-    __box_run sudo dnf upgrade -y
-    __box_run sudo dnf install -y \
-      bat btop curl direnv exa git git-lfs htop jq mc neofetch net-tools \
-      openssl p7zip p7zip-plugins speedtest-cli telnet tldr tmux \
-      traceroute unzip vim xclip xsel wget wl-clipboard zip zsh
-    __box_run sudo usermod --shell /usr/bin/zsh "$(id -nu)"
+
+    echo '*** PACMAN ***'
+    __box_run sudo sed -i '/^#Color$/c\Color' /etc/pacman.conf
+    echo '>>> OK <<<'
+    echo
+
+    echo '*** YAY ***'
+    local builddir
+    builddir=~/.cache/yay
+    __box_run mkdir -p "$builddir"
+    if ! __box_run /usr/bin/zsh -c 'command -v yay' &>/dev/null; then
+      __box_run rm -rf "$builddir/yay-bin"
+      __box_run git clone https://aur.archlinux.org/yay-bin.git "$builddir/yay-bin"
+      __box_run /usr/bin/zsh -c "cd '$builddir/yay-bin' && makepkg -si --noconfirm --needed --clean --cleanbuild"
+    fi
+    __box_run rm -f ~/.config/yay/config.json
+    __box_run yay -Y --save --needed --devel --builddir "$builddir" --batchinstall --combinedupgrade --cleanafter --removemake \
+      --cleanmenu --answerclean A --diffmenu --answerdiff I --editmenu --answeredit No --editor /usr/bin/bat \
+      --mflags '--noconfirm --needed --clean --cleanbuild'
+    echo '>>> OK <<<'
+    echo
+
+    echo '*** BASE PACKAGES ***'
+    __box_run yay -Syu --noconfirm
+    __box_run yay -S --noconfirm --needed --repo \
+      bat btop curl direnv exa ffmpeg git git-lfs htop inetutils jq mc \
+      nano neofetch net-tools openssl p7zip shellcheck speedtest-cli \
+      tldr tmux traceroute unzip vim xclip xsel wget wl-clipboard yq zip
     echo '>>> OK <<<'
     echo
 
     echo '*** REDIRECT HOST COMMANDS ***'
     __box_run /usr/bin/distrobox-host-exec -Y true # download host-spawn
     local host_cmd
-    for host_cmd in xdg-open docker docker-compose podman podman-compose flatpak; do
+    for host_cmd in xdg-open docker docker-compose podman podman-compose flatpak snap; do
       if @host zsh -c "command -v '$host_cmd'" &>/dev/null; then
         echo "command: $host_cmd"
         __box_run sudo ln -sfT /usr/bin/distrobox-host-exec "/usr/local/bin/$host_cmd"
@@ -162,6 +182,12 @@ EOF
       echo '>>> OK <<<'
       echo
     fi
+
+    echo '*** CLEANUP ***'
+    __box_run /usr/bin/zsh -c 'yay -Qtdq | yay -Rns --noconfirm -' &>/dev/null || true
+    __box_run yay -Sc --noconfirm >/dev/null
+    echo '>>> OK <<<'
+    echo
   )
 }
 
