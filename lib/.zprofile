@@ -12,6 +12,12 @@ elif command -v nano &>/dev/null; then
   export EDITOR=nano
 fi
 export VISUAL=$EDITOR
+if command -v bat &>/dev/null ; then
+  export PAGER='bat'
+  export BAT_PAGER='less -R'
+else
+  export PAGER='less'
+fi
 
 # paths
 # shellcheck disable=SC2034
