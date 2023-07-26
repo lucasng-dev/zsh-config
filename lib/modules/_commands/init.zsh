@@ -2,6 +2,7 @@
 alias @zshup='git -C "$ZDOTDIR/.." pull >/dev/null; zsh "$ZDOTDIR/../install.zsh"'
 
 alias e='$EDITOR'
+alias p='$PAGER'
 alias c='clear'
 alias x='exit'
 alias s='ssh'
