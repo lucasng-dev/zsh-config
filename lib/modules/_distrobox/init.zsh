@@ -159,8 +159,8 @@ function __box_upgrade() {
     __box_run yay -Syu --noconfirm
     __box_run yay -S --noconfirm --needed --repo \
       bat btop curl direnv exa ffmpeg git git-lfs htop inetutils jq mc \
-      nano neofetch net-tools openssl p7zip shellcheck speedtest-cli \
-      tldr tmux traceroute unzip vim xclip xsel wget wl-clipboard yq zip
+      neofetch neovim net-tools openssl p7zip shellcheck speedtest-cli \
+      tldr tmux traceroute unzip xclip xsel wget wl-clipboard yq zip
     echo '>>> OK <<<'
     echo
 
