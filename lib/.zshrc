@@ -20,6 +20,8 @@ alias x='exit'
 alias s='ssh'
 alias g='git'
 
+function m() { tldr "$@" 2>/dev/null || man "$@"; }
+
 alias ping='ping -O'
 
 if command -v bat &>/dev/null; then
