@@ -17,11 +17,11 @@ zstyle ':prezto:load' pmodule \
   'utility' \
   'completion' \
   'history-substring-search' \
+  '_upgrade' \
   '_distrobox' \
-  '_commands' \
-  '_direnv' \
   '_tab-complete' \
-  '_starship'
+  '_starship' \
+  '_direnv'
 
 # editor: https://github.com/sorin-ionescu/prezto/tree/master/modules/editor#editor
 zstyle ':prezto:module:editor' dot-expansion 'yes'
