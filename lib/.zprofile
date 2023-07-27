@@ -3,23 +3,7 @@ source "$ZDOTDIR/.zprezto/runcoms/zprofile"
 
 # >>> begin >>>
 
-# editors
-if command -v nvim &>/dev/null; then
-  export EDITOR=nvim
-elif command -v vim &>/dev/null; then
-  export EDITOR=vim
-elif command -v nano &>/dev/null; then
-  export EDITOR=nano
-fi
-export VISUAL=$EDITOR
-if command -v bat &>/dev/null ; then
-  export PAGER='bat'
-  export BAT_PAGER='less -R'
-else
-  export PAGER='less'
-fi
-
-# paths
+# path
 # shellcheck disable=SC2034
 typeset -gU cdpath fpath mailpath path
 # shellcheck disable=SC1036,SC2206
@@ -35,13 +19,36 @@ path=(
   $path
 )
 
-# less
-export LESS=${LESS/-X/} # restore mouse-wheel + screen clearing
-export LESSHISTFILE='-' # disable history
+# editor
+if command -v nvim &>/dev/null; then
+  export EDITOR=nvim
+elif command -v vim &>/dev/null; then
+  export EDITOR=vim
+else
+  export EDITOR=vi
+fi
+export VISUAL=$EDITOR
+
+# pager
+export LESS='-Rc'
+export LESSHISTFILE='-'
+unset LESSOPEN
+if command -v bat &>/dev/null; then
+  export PAGER=bat
+  export BAT_PAGER="less $LESS"
+else
+  export PAGER=less
+fi
+export MANPAGER='bat -l man -p'
+
+# browser
+if [[ -z "$BROWSER" ]]; then
+  if command -v xdg-open &>/dev/null; then
+    export BROWSER=xdg-open
+  fi
+fi
 
 # <<< end <<<
 
-_src_user_profile() { emulate -L ksh && if [[ -s ~/.profile ]]; then source ~/.profile; fi; }
-_src_user_profile
-unset -f _src_user_profile
+if [[ -s ~/.profile ]]; then emulate sh -c 'source ~/.profile'; fi
 if [[ -s ~/.zprofile ]]; then source ~/.zprofile; fi
