@@ -44,7 +44,7 @@ if command -v exa &>/dev/null; then
 fi
 
 if command -v mc &>/dev/null; then
-  alias mc='LC_ALL=C.UTF-8 mc -u'
+  alias mc='mc -u'
 fi
 
 if command -v jq &>/dev/null; then

@@ -19,6 +19,11 @@ path=(
   $path
 )
 
+# lang
+if locale 2>&1 | grep 'Cannot set LC_ALL' >/dev/null; then
+  export LC_ALL='C.UTF-8'
+fi
+
 # editor
 if command -v nvim &>/dev/null; then
   export EDITOR=nvim
