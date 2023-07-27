@@ -150,7 +150,7 @@ function __box_upgrade() {
     fi
     __box_run rm -f ~/.config/yay/config.json
     __box_run yay -Y --save --needed --devel --builddir "$builddir" --batchinstall --combinedupgrade --cleanafter --removemake \
-      --cleanmenu --answerclean A --diffmenu --answerdiff I --editmenu --answeredit No --editor /usr/bin/bat \
+      --cleanmenu --answerclean A --diffmenu --answerdiff I --editmenu --answeredit A --editor /usr/bin/nvim \
       --mflags '--noconfirm --needed --clean --cleanbuild'
     echo '>>> OK <<<'
     echo
