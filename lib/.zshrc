@@ -17,11 +17,16 @@ if command -v xdg-open &>/dev/null; then
 fi
 alias c='clear'
 alias x='exit'
+alias q='exit'
 alias s='ssh'
 alias g='git'
 
 function m() { tldr "$@" 2>/dev/null || man "$@"; }
-function h() { "$@" --help 2>&1 | { bat -l help -p 2>/dev/null || less; }; }
+if command -v bat &>/dev/null; then
+  function h() { "$@" --help 2>&1 | bat -l help -p; }
+else
+  function h() { "$@" --help 2>&1 | less; }
+fi
 
 alias ping='ping -O'
 
