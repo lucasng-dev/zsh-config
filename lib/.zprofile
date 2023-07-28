@@ -37,7 +37,6 @@ export VISUAL=$EDITOR
 # pager
 export LESS='-Rc'
 export LESSHISTFILE='-'
-unset LESSOPEN
 if command -v bat &>/dev/null; then
   export PAGER=bat
   export BAT_PAGER="less $LESS"
