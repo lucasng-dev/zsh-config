@@ -21,6 +21,7 @@ alias s='ssh'
 alias g='git'
 
 function m() { tldr "$@" 2>/dev/null || man "$@"; }
+function h() { "$@" --help 2>&1 | { bat -l help -p 2>/dev/null || less; }; }
 
 alias ping='ping -O'
 
