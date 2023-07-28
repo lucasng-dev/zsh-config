@@ -158,9 +158,9 @@ function __box_upgrade() {
     echo '*** BASE PACKAGES ***'
     __box_run yay -Syu --noconfirm
     __box_run yay -S --noconfirm --needed --repo \
-      bat btop curl direnv exa ffmpeg git git-lfs htop inetutils jq mc \
-      neofetch neovim net-tools openssl p7zip shellcheck speedtest-cli \
-      tldr tmux traceroute unzip xclip xsel wget wl-clipboard yq zip
+      bat btop curl direnv exa ffmpeg git git-lfs htop inetutils jq lesspipe \
+      mc neofetch neovim net-tools openssl p7zip shellcheck speedtest-cli tldr \
+      tmux traceroute unzip xclip xsel wget wl-clipboard yq zip
     echo '>>> OK <<<'
     echo
 
