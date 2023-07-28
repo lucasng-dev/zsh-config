@@ -41,10 +41,10 @@ unset LESSOPEN
 if command -v bat &>/dev/null; then
   export PAGER=bat
   export BAT_PAGER="less $LESS"
+  export MANPAGER='bat -l man -p'
 else
   export PAGER=less
 fi
-export MANPAGER='bat -l man -p'
 
 # browser
 if [[ -z "$BROWSER" ]]; then
