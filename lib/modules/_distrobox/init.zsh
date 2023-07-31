@@ -64,13 +64,24 @@ else
   function __box_exists() { @host docker container inspect distrobox &>/dev/null || { echo 'Container does not exist!' 1>&2 && return 1; }; }
 fi
 
+# __box_image_prune
+if [[ -n "$__is_podman" ]]; then
+  function __box_image_prune() { @host podman image prune --force &>/dev/null || true; }
+else
+  function __box_image_prune() { @host docker image prune --force &>/dev/null || true; }
+fi
+
 # __box_create
 if [[ -n "$__is_host" ]]; then
   function __box_create() {
     __box_exists &>/dev/null && echo 'Container already exists!' 1>&2 && return 1
-    @host distrobox-create -Y --no-entry -i quay.io/toolbx-images/archlinux-toolbox:latest -n distrobox \
+    @host distrobox-create --yes --no-entry --name distrobox \
+      --pull --image quay.io/toolbx-images/archlinux-toolbox:latest \
       --additional-flags "--hostname '$(@host uname -n)'" \
-      --additional-packages 'base-devel bat git zsh' && __box_upgrade && __box_enter
+      --additional-packages 'base-devel bat git less lesspipe neovim zsh' &&
+      __box_image_prune &&
+      __box_upgrade &&
+      __box_enter
   }
 else
   function __box_create() { echo "Command 'create' unavailable on distrobox container!" 1>&2 && return 1; }
@@ -78,23 +89,23 @@ fi
 
 # __box_enter
 if [[ -n "$__is_host" ]]; then
-  function __box_enter() { __box_exists && @host distrobox-enter distrobox -- /usr/bin/zsh -l; }
+  function __box_enter() { __box_exists && @host distrobox-enter --name distrobox -- /usr/bin/zsh -l; }
 else
   function __box_enter() { return 0; }
 fi
 
 # __box_run
 if [[ -n "$__is_host" ]]; then
-  function __box_run() { __box_exists && @host distrobox-enter distrobox -- "$@"; }
+  function __box_run() { __box_exists && @host distrobox-enter --name distrobox -- "$@"; }
 else
   function __box_run() { "$@"; }
 fi
 
 # __box_stats
 if [[ -n "$__is_podman" ]]; then
-  function __box_stats() { @host podman container stats distrobox; }
+  function __box_stats() { @host watch podman container stats --no-stream distrobox; }
 else
-  function __box_stats() { @host docker container stats distrobox; }
+  function __box_stats() { @host watch docker container stats --no-stream distrobox; }
 fi
 
 # __box_logs
@@ -106,7 +117,7 @@ fi
 
 # __box_stop
 if [[ -n "$__is_host" ]]; then
-  function __box_stop() { @host distrobox-stop -Y distrobox; }
+  function __box_stop() { @host distrobox-stop --yes --name distrobox; }
 else
   function __box_stop() { echo "Command 'stop' unavailable on distrobox container!" 1>&2 && return 1; }
 fi
@@ -115,7 +126,7 @@ fi
 if [[ -n "$__is_host" ]]; then
   function __box_rm() {
     __box_stop &>/dev/null || true
-    @host distrobox-rm -f distrobox
+    @host distrobox-rm --force `#--name` distrobox
   }
 else
   function __box_rm() { echo "Command 'rm' unavailable on distrobox container!" 1>&2 && return 1; }
@@ -149,7 +160,7 @@ function __box_upgrade() {
       __box_run /usr/bin/zsh -c "cd '$builddir/yay-bin' && makepkg -si --noconfirm --needed --clean --cleanbuild"
     fi
     __box_run rm -f ~/.config/yay/config.json
-    __box_run yay -Y --save --needed --devel --builddir "$builddir" --batchinstall --combinedupgrade --cleanafter --removemake \
+    __box_run yay -Y --save --needed --devel --builddir "$builddir" --batchinstall --nocombinedupgrade --cleanafter --removemake \
       --cleanmenu --answerclean A --diffmenu --answerdiff I --editmenu --answeredit A --editor /usr/bin/nvim \
       --mflags '--noconfirm --needed --clean --cleanbuild'
     echo '>>> OK <<<'
@@ -158,14 +169,14 @@ function __box_upgrade() {
     echo '*** BASE PACKAGES ***'
     __box_run yay -Syu --noconfirm
     __box_run yay -S --noconfirm --needed --repo \
-      bat btop curl direnv exa ffmpeg git git-lfs htop inetutils jq lesspipe \
-      mc neofetch neovim net-tools openssl p7zip shellcheck speedtest-cli tldr \
-      tmux traceroute unzip xclip xsel wget wl-clipboard yq zip
+      bat bind btop curl direnv exa ffmpeg git git-lfs htop inetutils inxi jq less lesspipe \
+      mc neofetch neovim net-tools onefetch openssl p7zip shellcheck speedtest-cli tldr tmux \
+      traceroute unarchiver unrar unzip xclip xsel wget wl-clipboard yq zip
     echo '>>> OK <<<'
     echo
 
     echo '*** REDIRECT HOST COMMANDS ***'
-    __box_run /usr/bin/distrobox-host-exec -Y true # download host-spawn
+    __box_run /usr/bin/distrobox-host-exec --yes true # download host-spawn
     local host_cmd
     for host_cmd in xdg-open docker docker-compose podman podman-compose flatpak snap; do
       if @host zsh -c "command -v '$host_cmd'" &>/dev/null; then
