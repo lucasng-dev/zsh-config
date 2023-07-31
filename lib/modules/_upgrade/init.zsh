@@ -21,13 +21,13 @@ function @upgrade() {
   fi
   if command -v snap &>/dev/null; then
     echo && echo '### SNAP ###' && sudo snap refresh && (
+      local name version rev tracking publisher notes
       # shellcheck disable=SC2034
-      LANG=C snap list --all |
-        while read -r name version rev tracking publisher notes; do
-          if [[ "$notes" == *disabled* ]]; then
-            sudo snap remove "$name" --revision="$rev"
-          fi
-        done
+      while read -r name version rev tracking publisher notes; do
+        if [[ "$notes" == *disabled* ]]; then
+          sudo snap remove "$name" --revision="$rev"
+        fi
+      done < <(LANG=C snap list --all)
     )
   fi
 }
