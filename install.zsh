@@ -37,7 +37,7 @@ echo
 echo '*** STARSHIP INSTALL ***'
 STARSHIPDIR=$ZDOTDIR/.starship
 mkdir -p "$STARSHIPDIR"
-wget --no-hsts --no-verbose -O - https://starship.rs/install.sh | sh -s -- --bin-dir "$STARSHIPDIR" -y >/dev/null
+wget --no-hsts --no-verbose -O - https://raw.githubusercontent.com/starship/starship/master/install/install.sh | sh -s -- --bin-dir "$STARSHIPDIR" -y >/dev/null
 "$STARSHIPDIR/starship" --version
 echo '>>> OK <<<'
 echo
