@@ -18,17 +18,18 @@ fi
 alias c='clear'
 alias x='exit'
 alias q='exit'
-alias s='ssh'
+alias r='ssh'
+alias s='sudo'
 alias g='git'
 
 function m() { tldr "$@" 2>/dev/null || man "$@"; }
-if command -v bat &>/dev/null; then
-  function h() { "$@" --help 2>&1 | bat -l help -p; }
-else
-  function h() { "$@" --help 2>&1 | less; }
-fi
-
-alias ping='ping -O'
+function h() {
+  if command -v bat &>/dev/null; then
+    "$@" --help 2>&1 | bat -l help -p
+  else
+    "$@" --help 2>&1 | less
+  fi
+}
 
 if command -v bat &>/dev/null; then
   alias cat='bat'
@@ -62,12 +63,19 @@ if command -v yq &>/dev/null; then
   alias yq='yq -C'
 fi
 
+alias ping='ping -O'
+
 if ! command -v docker &>/dev/null && command -v podman &>/dev/null; then
   alias docker='podman'
 fi
 if ! command -v docker-compose &>/dev/null && command -v podman-compose &>/dev/null; then
   alias docker-compose='podman-compose'
 fi
+
+function detach() {
+  "$@" </dev/null &>/dev/null &
+  disown
+}
 
 # <<< end <<<
 
