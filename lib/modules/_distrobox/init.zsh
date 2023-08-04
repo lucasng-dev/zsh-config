@@ -161,7 +161,7 @@ function __box_upgrade() {
     fi
     __box_run rm -f ~/.config/yay/config.json
     __box_run yay -Y --save --needed --devel --builddir "$builddir" --batchinstall --nocombinedupgrade --cleanafter --removemake \
-      --cleanmenu --answerclean A --diffmenu --answerdiff I --editmenu --answeredit A --editor /usr/bin/nvim \
+      --nocleanmenu --answerclean A --nodiffmenu --answerdiff N --editmenu --answeredit A --editor /usr/bin/nvim \
       --mflags '--noconfirm --needed --clean --cleanbuild'
     echo '>>> OK <<<'
     echo
@@ -169,9 +169,9 @@ function __box_upgrade() {
     echo '*** BASE PACKAGES ***'
     __box_run yay -Syu --noconfirm
     __box_run yay -S --noconfirm --needed --repo \
-      bat bind btop curl direnv exa ffmpeg git git-lfs htop inetutils inxi jq less lesspipe \
-      mc neofetch neovim net-tools onefetch openssl p7zip shellcheck shfmt speedtest-cli tldr \
-      tmux traceroute unarchiver unrar unzip xclip xsel wget wl-clipboard yq zip
+      bat bind btop curl direnv exa ffmpeg fzf git git-lfs htop imagemagick inetutils inxi jq less lesspipe \
+      mc neofetch neovim net-tools onefetch openssl p7zip shellcheck shfmt speedtest-cli tldr tmux traceroute \
+      unarchiver unrar unzip xclip xsel wget whois wl-clipboard yq zip
     echo '>>> OK <<<'
     echo
 
