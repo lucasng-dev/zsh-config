@@ -170,7 +170,7 @@ function __box_upgrade() {
     __box_run yay -Syu --noconfirm
     __box_run yay -S --noconfirm --needed --repo \
       bat bind btop cmatrix curl direnv exa ffmpeg fzf git git-lfs htop imagemagick inetutils inxi jq less lesspipe \
-      mc ncdu neofetch neovim net-tools onefetch openssl p7zip shellcheck shfmt speedtest-cli tldr tmux traceroute \
+      mc ncdu neofetch neovim net-tools onefetch openssl p7zip rsync shellcheck shfmt speedtest-cli tldr tmux traceroute \
       unarchiver unrar unzip xclip xsel wget whois wl-clipboard yq zip
     echo '>>> OK <<<'
     echo
