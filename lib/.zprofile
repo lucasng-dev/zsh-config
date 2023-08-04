@@ -52,6 +52,10 @@ if [[ -z "$BROWSER" ]]; then
   fi
 fi
 
+if command -v fzf &>/dev/null; then
+  export FZF_DEFAULT_OPTS='--multi --layout=reverse --border'
+fi
+
 # <<< end <<<
 
 if [[ -s ~/.profile ]]; then emulate sh -c 'source ~/.profile'; fi

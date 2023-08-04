@@ -54,6 +54,10 @@ if command -v exa &>/dev/null; then
   alias la='exa -la'
 fi
 
+if command -v fzf &>/dev/null; then
+  alias f=fzf
+fi
+
 if command -v mc &>/dev/null; then
   alias mc='mc -u'
 fi
