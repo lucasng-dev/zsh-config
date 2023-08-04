@@ -39,7 +39,7 @@ export LESS='-Rcq --no-vbell'
 export LESSHISTFILE='-'
 if command -v bat &>/dev/null; then
   export PAGER=bat
-  export BAT_PAGER="less $LESS"
+  export BAT_PAGER="less $LESS -L"
   export MANPAGER='bat -l man -p'
 else
   export PAGER=less
@@ -52,6 +52,7 @@ if [[ -z "$BROWSER" ]]; then
   fi
 fi
 
+# fzf
 if command -v fzf &>/dev/null; then
   export FZF_DEFAULT_OPTS='--multi --layout=reverse --border'
 fi
