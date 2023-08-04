@@ -184,6 +184,16 @@ function __box_upgrade() {
         __box_run sudo ln -sfT /usr/bin/distrobox-host-exec "/usr/local/bin/$host_cmd"
       fi
     done
+    echo 'command: sudo (wrapper)'
+    __box_run /usr/bin/sudo tee /usr/local/bin/sudo >/dev/null <<EOF
+#!/usr/bin/zsh
+host_bin=\$(echo "\${1:-}" | sed 's|^/usr/local/bin/||')
+if [[ -n "\$(find /usr/local/bin/ -mindepth 1 -maxdepth 1 -name "\$host_bin" -lname /usr/bin/distrobox-host-exec 2>/dev/null)" ]]; then
+  shift && exec /usr/bin/distrobox-host-exec sudo -p "[sudo] password for \$(id -nu) (host): " "\$host_bin" "\$@" # host sudo
+fi
+exec /usr/bin/sudo "\$@" # container sudo
+EOF
+    __box_run sudo chmod +x /usr/local/bin/sudo
     echo '>>> OK <<<'
     echo
 
