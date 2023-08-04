@@ -3,6 +3,8 @@ source "$ZDOTDIR/.zprezto/runcoms/zshrc"
 
 # >>> begin >>>
 
+unsetopt BEEP LIST_BEEP HIST_BEEP
+
 alias @zshup='git -C "$ZDOTDIR/.." pull >/dev/null; zsh "$ZDOTDIR/../install.zsh"'
 
 # shellcheck disable=SC2154

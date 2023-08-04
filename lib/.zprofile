@@ -35,7 +35,7 @@ fi
 export VISUAL=$EDITOR
 
 # pager
-export LESS='-Rc'
+export LESS='-Rcq --no-vbell'
 export LESSHISTFILE='-'
 if command -v bat &>/dev/null; then
   export PAGER=bat
