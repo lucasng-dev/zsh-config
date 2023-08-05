@@ -10,12 +10,12 @@ typeset -gU cdpath fpath mailpath path
 path=(
   ~/.local/bin(N)
   /opt/homebrew/{,s}bin(N)
-  /var/lib/snapd/snap/bin(N)
+  {,/var/lib/snapd}/snap/bin(N)
   /opt/local/{,s}bin(N)
   /usr/local/{,s}bin(N)
   /usr/{,s}bin(N)
   /{,s}bin(N)
-  $path
+  $path(N)
 )
 
 # lang
