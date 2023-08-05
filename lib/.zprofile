@@ -11,7 +11,6 @@ path=(
   ~/.local/bin(N)
   /opt/homebrew/{,s}bin(N)
   /var/lib/snapd/snap/bin(N)
-  /var/lib/flatpak/exports/bin(N)
   /opt/local/{,s}bin(N)
   /usr/local/{,s}bin(N)
   /usr/{,s}bin(N)
