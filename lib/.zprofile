@@ -15,8 +15,14 @@ path=(
   /usr/local/{,s}bin(N)
   /usr/{,s}bin(N)
   /{,s}bin(N)
-  $path(N)
+  $path
 )
+for __path in "${path[@]}"; do
+  if [[ ! -d "$__path" ]]; then
+    path=("${path[@]:#$__path}") # remove
+  fi
+done
+unset __path
 
 # lang
 if locale 2>&1 | grep 'Cannot set LC_ALL' >/dev/null; then
