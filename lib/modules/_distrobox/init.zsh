@@ -204,7 +204,7 @@ EOF
 
     if [[ -s ~/.box ]]; then
       echo '*** PROVISIONING SCRIPT ***'
-      __box_run /usr/bin/zsh -euxf -o pipefail ~/.box
+      __box_run /usr/bin/zsh -eu -o pipefail ~/.box
       echo '>>> OK <<<'
       echo
     fi
