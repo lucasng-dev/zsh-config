@@ -7,8 +7,8 @@ function @box() {
   help) __box_help ;;
   exists) __box_exists ;;
   create) __box_create ;;
-  enter) __box_enter ;;
   run) shift 1 && __box_run "$@" ;;
+  enter) __box_enter ;;
   stats) __box_stats ;;
   logs) __box_logs ;;
   stop) __box_stop ;;
@@ -71,13 +71,18 @@ else
   function __box_image_prune() { @host docker image prune --force &>/dev/null || true; }
 fi
 
+# __box_path_env
+function __box_path_env() {
+  echo "$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+}
+
 # __box_create
 if [[ -n "$__is_host" ]]; then
   function __box_create() {
     __box_exists &>/dev/null && echo 'Container already exists!' 1>&2 && return 1
     @host distrobox-create --yes --no-entry --name distrobox \
       --pull --image quay.io/toolbx-images/archlinux-toolbox:latest \
-      --additional-flags "--hostname '$(@host uname -n)'" \
+      --additional-flags "--env 'PATH=$(__box_path_env)' --hostname '$(@host uname -n)'" \
       --additional-packages 'base-devel bat git less lesspipe neovim zsh' &&
       __box_image_prune &&
       __box_upgrade &&
@@ -87,18 +92,18 @@ else
   function __box_create() { echo "Command 'create' unavailable on distrobox container!" 1>&2 && return 1; }
 fi
 
-# __box_enter
-if [[ -n "$__is_host" ]]; then
-  function __box_enter() { __box_exists && @host distrobox-enter --name distrobox -- /usr/bin/zsh -l; }
-else
-  function __box_enter() { return 0; }
-fi
-
 # __box_run
 if [[ -n "$__is_host" ]]; then
   function __box_run() { __box_exists && @host distrobox-enter --name distrobox -- "$@"; }
 else
   function __box_run() { "$@"; }
+fi
+
+# __box_enter
+if [[ -n "$__is_host" ]]; then
+  function __box_enter() { __box_run /usr/bin/zsh -l; }
+else
+  function __box_enter() { return 0; }
 fi
 
 # __box_stats
