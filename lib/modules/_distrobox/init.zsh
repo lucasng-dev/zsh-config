@@ -71,10 +71,8 @@ else
   function __box_image_prune() { @host docker image prune --force &>/dev/null || true; }
 fi
 
-# __box_path_env
-function __box_path_env() {
-  echo "$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
-}
+# __box_env_path
+function __box_env_path() { echo "$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"; }
 
 # __box_create
 if [[ -n "$__is_host" ]]; then
@@ -82,7 +80,7 @@ if [[ -n "$__is_host" ]]; then
     __box_exists &>/dev/null && echo 'Container already exists!' 1>&2 && return 1
     @host distrobox-create --yes --no-entry --name distrobox \
       --pull --image quay.io/toolbx-images/archlinux-toolbox:latest \
-      --additional-flags "--env 'PATH=$(__box_path_env)' --hostname '$(@host uname -n)'" \
+      --additional-flags "--env 'PATH=$(__box_env_path)' --hostname '$(@host uname -n)'" \
       --additional-packages 'base-devel bat git less lesspipe neovim zsh' &&
       __box_image_prune &&
       __box_upgrade &&
@@ -174,7 +172,7 @@ function __box_upgrade() {
     echo '*** BASE PACKAGES ***'
     __box_run yay -Syu --noconfirm
     __box_run yay -S --noconfirm --needed --repo \
-      bat bind btop cmatrix curl direnv exa ffmpeg fzf git git-lfs htop imagemagick inetutils inxi iperf3 jq less lesspipe \
+      bat bind btop cmatrix curl direnv exa fd ffmpeg fzf git git-lfs htop imagemagick inetutils inxi iperf3 jq less lesspipe \
       mc ncdu neofetch neovim net-tools onefetch openssl p7zip rsync shellcheck shfmt speedtest-cli tldr tmux traceroute \
       unarchiver unrar unzip xclip xsel wget whois wl-clipboard yq zip
     echo '>>> OK <<<'
