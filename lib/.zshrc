@@ -3,89 +3,114 @@ source "$ZDOTDIR/.zprezto/runcoms/zshrc"
 
 # >>> begin >>>
 
-unsetopt BEEP LIST_BEEP HIST_BEEP
+# history
+export HISTFILE=/dev/null
 
+# zsh
+setopt nobeep nolistbeep nohistbeep
+
+# update
 alias @zshup='git -C "$ZDOTDIR/.." pull >/dev/null; zsh "$ZDOTDIR/../install.zsh"'
 
-# shellcheck disable=SC2154
-alias e='$EDITOR'
-# shellcheck disable=SC2154
-alias v='$PAGER'
-alias p='$PAGER'
-# shellcheck disable=SC2154
-alias b='$BROWSER'
-if command -v xdg-open &>/dev/null; then
-  alias o='xdg-open'
-fi
-alias c='clear'
-alias x='exit'
-alias q='exit'
-alias r='ssh'
-alias s='sudo'
-alias g='git'
-
-function m() { tldr "$@" 2>/dev/null || man "$@"; }
-function h() {
-  if command -v bat &>/dev/null; then
-    "$@" --help 2>&1 | bat -l help -p
-  else
-    "$@" --help 2>&1 | less
-  fi
-}
-
-if command -v bat &>/dev/null; then
-  alias cat='bat'
-fi
-
-if command -v nvim &>/dev/null; then
-  alias vim='nvim'
-  alias vi='nvim'
-elif command -v vim &>/dev/null; then
-  alias vi='vim'
-elif command -v vi &>/dev/null; then
-  alias vim='vi'
-fi
-
+# list
 if command -v exa &>/dev/null; then
-  alias exa='exa --color=always --icons --group-directories-first --group --header --octal-permissions'
+  alias exa='exa --color=auto --group-directories-first --binary --header --icons --group --octal-permissions'
   alias ls='exa'
   alias l='exa -1a'
   alias ll='exa -l'
   alias la='exa -la'
+else
+  alias ls='ls --color=auto --group-directories-first --kibibytes --human-readable'
+  alias l='ls -1A'
+  alias ll='ls -l'
+  alias la='ls -lA'
 fi
 
-if command -v ncdu &>/dev/null; then
-  alias du='ncdu -x'
+# viewer / pager
+if command -v bat &>/dev/null; then
+  alias cat='bat'
+  alias less='bat'
+  alias v='bat'
+  alias p='bat'
+else
+  alias cat='less'
+  alias v='less'
+  alias p='less'
 fi
 
+# editor
+if command -v nvim &>/dev/null; then
+  alias vi='nvim'
+  alias vim='nvim'
+  alias e='nvim'
+elif command -v vim &>/dev/null; then
+  alias vi='vim'
+  alias e='vim'
+else
+  alias vim='vi'
+  alias e='vi'
+fi
+
+# finder
 if command -v fzf &>/dev/null; then
-  alias f=fzf
+  f() { if [[ $# -gt 0 ]]; then fzf --bind "enter:become($* {+})"; else fzf; fi; }
 fi
 
+# opener
+if command -v xdg-open &>/dev/null; then
+  alias o='xdg-open'
+fi
+
+# env
+env() { if [[ $# -gt 0 ]]; then command env "$@"; else command env | sort -f | { bat -l ini -p 2>/dev/null || less -R; }; fi; }
+printenv() { if [[ $# -gt 0 ]]; then command printenv "$@"; else command printenv | sort -f | { bat -l ini -p 2>/dev/null || less -R; }; fi; }
+
+# ssh
+alias ssh='ssh -t'
+alias s='ssh'
+
+# network
+alias ping='ping -O'
+
+# disk usage
+if command -v ncdu &>/dev/null; then
+  alias ncdu='ncdu -x'
+  alias du='ncdu'
+fi
+
+# file manager
 if command -v mc &>/dev/null; then
   alias mc='mc -u'
 fi
 
-if command -v jq &>/dev/null; then
-  alias jq='jq -C'
-fi
-if command -v yq &>/dev/null; then
-  alias yq='yq -C'
+# help / manual
+h() { "$@" --help 2>&1 | { bat -l help -p 2>/dev/null || less; }; }
+m() { tldr "$@" 2>/dev/null || man "$@" 2>/dev/null || h "$@"; }
+
+# terminal
+alias c='clear'
+alias x='exit'
+detach() {
+  "$@" </dev/null &>/dev/null &
+  disown
+}
+if command -v cmatrix &>/dev/null; then
+  alias cmatrix='cmatrix -b'
 fi
 
-alias ping='ping -O'
-
+# containers
 if ! command -v docker &>/dev/null && command -v podman &>/dev/null; then
   alias docker='podman'
 fi
 if ! command -v docker-compose &>/dev/null && command -v podman-compose &>/dev/null; then
   alias docker-compose='podman-compose'
 fi
+if { [[ -f /run/.containerenv ]] || [[ -f /.dockerenv ]]; } && ! command -v distrobox; then
+  alias distrobox='distrobox-host-exec distrobox'
+fi
 
-function detach() {
-  "$@" </dev/null &>/dev/null &
-  disown
-}
+# git
+alias g='git'
 
 # <<< end <<<
 
