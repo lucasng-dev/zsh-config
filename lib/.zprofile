@@ -3,6 +3,9 @@ source "$ZDOTDIR/.zprezto/runcoms/zprofile"
 
 # >>> begin >>>
 
+# history
+export HISTFILE=/dev/null
+
 # path
 # shellcheck disable=SC2034
 typeset -gU cdpath fpath mailpath path
@@ -23,10 +26,23 @@ for __path in "${path[@]}"; do
   fi
 done
 unset __path
+export PATH
 
 # lang
-if locale 2>&1 | grep 'Cannot set LC_ALL' >/dev/null; then
+if [[ "$(locale 2>&1)" == *'Cannot set LC_ALL'* ]]; then
   export LC_ALL='C.UTF-8'
+fi
+
+# viewer / pager
+export LESS='-cQr --no-vbell'
+export LESSHISTFILE='-'
+if command -v bat &>/dev/null; then
+  export PAGER=bat
+  export BAT_PAGER="less $LESS -L"
+  export MANPAGER='bat -l man -p'
+else
+  export PAGER=less
+  export MANPAGER=less
 fi
 
 # editor
@@ -39,15 +55,17 @@ else
 fi
 export VISUAL=$EDITOR
 
-# pager
-export LESS='-Rcq --no-vbell'
-export LESSHISTFILE='-'
-if command -v bat &>/dev/null; then
-  export PAGER=bat
-  export BAT_PAGER="less $LESS -L"
-  export MANPAGER='bat -l man -p'
-else
-  export PAGER=less
+# finder
+if command -v fzf &>/dev/null; then
+  export FZF_DEFAULT_OPTS='--multi --layout=reverse'
+  if command -v bat &>/dev/null; then
+    export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --preview='bat --color=always -p {}'"
+  else
+    export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --preview='cat {}'"
+  fi
+  if command -v fd &>/dev/null; then
+    export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
+  fi
 fi
 
 # browser
@@ -57,12 +75,7 @@ if [[ -z "$BROWSER" ]]; then
   fi
 fi
 
-# fzf
-if command -v fzf &>/dev/null; then
-  export FZF_DEFAULT_OPTS='--multi --layout=reverse --border'
-fi
-
 # <<< end <<<
 
-if [[ -s ~/.profile ]]; then emulate sh -c 'source ~/.profile'; fi
+if [[ -s ~/.profile ]]; then emulate sh -c '. ~/.profile'; fi
 if [[ -s ~/.zprofile ]]; then source ~/.zprofile; fi
