@@ -26,28 +26,29 @@ else
   alias la='ls -lA'
 fi
 
-# viewer / pager
+# concat / pager
 if command -v bat &>/dev/null; then
-  alias cat='bat'
   alias less='bat'
-  alias v='bat'
+  alias cat='bat'
   alias p='bat'
 else
   alias cat='less'
-  alias v='less'
   alias p='less'
 fi
 
-# editor
+# editor / visual
 if command -v nvim &>/dev/null; then
-  alias vi='nvim'
   alias vim='nvim'
+  alias vi='nvim'
+  alias v='nvim'
   alias e='nvim'
 elif command -v vim &>/dev/null; then
   alias vi='vim'
+  alias v='vim'
   alias e='vim'
 else
   alias vim='vi'
+  alias v='vi'
   alias e='vi'
 fi
 
@@ -62,8 +63,8 @@ if command -v xdg-open &>/dev/null; then
 fi
 
 # env
-env() { if [[ $# -gt 0 ]]; then command env "$@"; else command env | sort -f | { bat -l ini -p 2>/dev/null || less -R; }; fi; }
-printenv() { if [[ $# -gt 0 ]]; then command printenv "$@"; else command printenv | sort -f | { bat -l ini -p 2>/dev/null || less -R; }; fi; }
+env() { if [[ $# -gt 0 ]]; then command env "$@"; else command env | sort -f | { bat -l ini -p 2>/dev/null || less; }; fi; }
+printenv() { if [[ $# -gt 0 ]]; then command printenv "$@"; else command printenv | sort -f | { bat -l ini -p 2>/dev/null || less; }; fi; }
 
 # ssh
 alias ssh='ssh -t'
@@ -91,7 +92,7 @@ m() { tldr "$@" 2>/dev/null || man "$@" 2>/dev/null || h "$@"; }
 alias c='clear'
 alias x='exit'
 detach() {
-  "$@" </dev/null &>/dev/null &
+  nohup "$@" </dev/null &>/dev/null &
   disown
 }
 if command -v cmatrix &>/dev/null; then

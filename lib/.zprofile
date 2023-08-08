@@ -33,8 +33,8 @@ if [[ "$(locale 2>&1)" == *'Cannot set LC_ALL'* ]]; then
   export LC_ALL='C.UTF-8'
 fi
 
-# viewer / pager
-export LESS='-cQr --no-vbell'
+# concat / pager
+export LESS='-cgiKQnR --no-vbell'
 export LESSHISTFILE='-'
 if command -v bat &>/dev/null; then
   export PAGER=bat
@@ -45,7 +45,7 @@ else
   export MANPAGER=less
 fi
 
-# editor
+# editor / visual
 if command -v nvim &>/dev/null; then
   export EDITOR=nvim
 elif command -v vim &>/dev/null; then
