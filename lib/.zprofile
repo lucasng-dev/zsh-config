@@ -21,7 +21,7 @@ path=(
   $path
 )
 for __path in "${path[@]}"; do
-  if [[ ! -d "$__path" ]]; then
+  if [[ ! -d "$__path/" ]]; then
     path=("${path[@]:#$__path}") # remove
   fi
 done
