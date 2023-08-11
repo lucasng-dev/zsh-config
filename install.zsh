@@ -48,7 +48,7 @@ font_download_dir=$ZDOTDIR/.cache/fonts-download
 mkdir -p "$font_download_dir"
 wget --no-hsts --no-verbose --show-progress -N -P "$font_download_dir" \
   "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font_file"
-if [[ "$(uname)" == 'Darwin' ]]; then
+if [[ "${OSTYPE:-}" == darwin* ]]; then
   font_user_dir=~/Library/Fonts/NerdFonts # macOS
 else
   font_user_dir=~/.local/share/fonts/NerdFonts # Linux
