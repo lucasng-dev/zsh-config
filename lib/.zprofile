@@ -1,5 +1,5 @@
 if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
-source "$ZDOTDIR/.zprezto/runcoms/zprofile"
+#source "$ZDOTDIR/.zprezto/runcoms/zprofile"
 
 # >>> begin >>>
 
@@ -29,6 +29,9 @@ unset __path
 export PATH
 
 # lang
+if [[ -z "${LANG:-}" ]]; then
+  export LANG='en_US.UTF-8'
+fi
 if [[ "$(locale 2>&1)" == *'Cannot set LC_ALL'* ]]; then
   export LC_ALL='C.UTF-8'
 fi
@@ -69,9 +72,11 @@ if command -v fzf &>/dev/null; then
 fi
 
 # browser
-if [[ -z "$BROWSER" ]]; then
+if [[ -z "${BROWSER:-}" ]]; then
   if command -v xdg-open &>/dev/null; then
     export BROWSER=xdg-open
+  elif command -v open &>/dev/null && [[ "${OSTYPE:-}" == darwin* ]]; then
+    export BROWSER=open
   fi
 fi
 
