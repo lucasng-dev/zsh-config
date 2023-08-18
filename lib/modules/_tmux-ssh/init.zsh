@@ -1,9 +1,7 @@
 if command -v tmux &>/dev/null && tty -s && [[ -z "$TMUX" ]] && [[ -n "$TERM" ]] && [[ -n "$SSH_TTY" ]]; then
-  session_name=$(id -nu)
-  if tmux has-session -t "$session_name" &>/dev/null; then
-    exec tmux attach-session -t "$session_name"
+  if tmux has-session -t SSH &>/dev/null; then
+    exec tmux attach-session -t SSH
   else
-    exec tmux new-session -s "$session_name"
+    exec tmux new-session -s SSH
   fi
-  unset session_name
 fi
