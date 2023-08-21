@@ -140,7 +140,7 @@ function __box_upgrade() {
   (
     set -eu -o pipefail
 
-    # init  container
+    # init container
     __box_run echo
 
     echo '*** ZSH ***'
@@ -149,31 +149,31 @@ function __box_upgrade() {
     echo
 
     echo '*** PACMAN ***'
-    __box_run sudo sed -i '/^#Color$/c\Color' /etc/pacman.conf
+    __box_run sudo sed -i '/^\(Color\|ILoveCandy\)\s*$/d' /etc/pacman.conf
+    __box_run sudo sed -i 's/^\(#\s*Misc options\s*\)$/\1\nColor\nILoveCandy/g' /etc/pacman.conf
     echo '>>> OK <<<'
     echo
 
     echo '*** YAY ***'
-    local builddir
-    builddir=~/.cache/yay
+    local builddir=~/.cache/yay
     __box_run mkdir -p "$builddir"
     if ! __box_run /usr/bin/zsh -c 'command -v yay' &>/dev/null; then
       __box_run rm -rf "$builddir/yay-bin"
       __box_run git clone https://aur.archlinux.org/yay-bin.git "$builddir/yay-bin"
-      __box_run /usr/bin/zsh -c "cd '$builddir/yay-bin' && makepkg -si --noconfirm --needed --clean --cleanbuild"
+      __box_run /usr/bin/zsh -c "cd '$builddir/yay-bin' && makepkg -si --noconfirm --needed --clean --cleanbuild --skippgpcheck"
     fi
     __box_run rm -f ~/.config/yay/config.json
     __box_run yay -Y --save --needed --devel --builddir "$builddir" --batchinstall --nocombinedupgrade --cleanafter --removemake \
       --nocleanmenu --answerclean A --nodiffmenu --answerdiff N --editmenu --answeredit A --editor /usr/bin/nvim \
-      --mflags '--noconfirm --needed --clean --cleanbuild'
+      --mflags '--noconfirm --needed --clean --cleanbuild --skippgpcheck'
     echo '>>> OK <<<'
     echo
 
     echo '*** BASE PACKAGES ***'
     __box_run yay -Syu --noconfirm
     __box_run yay -S --noconfirm --needed --repo \
-      bat bind btop cmatrix curl direnv exa fd ffmpeg fzf git git-lfs htop imagemagick inetutils inxi iperf3 jq less lesspipe \
-      mc ncdu neofetch neovim net-tools onefetch openssl p7zip rsync shellcheck shfmt speedtest-cli tldr tmux traceroute \
+      bat bc bind btop cmatrix curl direnv exa fd ffmpeg fzf git git-lfs htop imagemagick inetutils inxi iperf3 jq less lesspipe \
+      mc mtr ncdu neofetch neovim net-tools onefetch openssl p7zip rsync shellcheck shfmt speedtest-cli tldr tmux traceroute tree \
       unarchiver unrar unzip xclip xsel wget whois wl-clipboard yq zip
     echo '>>> OK <<<'
     echo
@@ -192,7 +192,7 @@ function __box_upgrade() {
 #!/usr/bin/zsh
 host_bin=\$(echo "\${1:-}" | sed 's|^/usr/local/bin/||')
 if [[ -n "\$(find /usr/local/bin/ -mindepth 1 -maxdepth 1 -name "\$host_bin" -lname /usr/bin/distrobox-host-exec 2>/dev/null)" ]]; then
-  shift && exec /usr/bin/distrobox-host-exec sudo -p "[sudo] password for \$(id -nu) (host): " "\$host_bin" "\$@" # host sudo
+  shift 1 && exec /usr/bin/distrobox-host-exec sudo -p "[sudo] password for \$(id -nu) (host): " "\$host_bin" "\$@" # host sudo
 fi
 exec /usr/bin/sudo "\$@" # container sudo
 EOF
