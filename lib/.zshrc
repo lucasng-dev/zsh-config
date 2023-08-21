@@ -72,6 +72,10 @@ alias s='ssh'
 
 # network
 alias ping='ping -O'
+if command -v mtr &>/dev/null; then
+  alias mtr='mtr -b -y 2'
+  alias traceroute='mtr'
+fi
 
 # disk usage
 if command -v ncdu &>/dev/null; then
@@ -82,6 +86,11 @@ fi
 # file manager
 if command -v mc &>/dev/null; then
   alias mc='mc -u'
+fi
+
+# calculator
+if command -v bc &>/dev/null; then
+  alias bc='bc -q'
 fi
 
 # help / manual
