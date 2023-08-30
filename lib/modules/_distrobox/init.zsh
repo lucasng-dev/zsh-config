@@ -80,7 +80,7 @@ if [[ -n "$__is_host" ]]; then
     __box_exists &>/dev/null && echo 'Container already exists!' 1>&2 && return 1
     @host distrobox-create --yes --no-entry --name distrobox \
       --pull --image quay.io/toolbx-images/archlinux-toolbox:latest \
-      --additional-flags "--env 'PATH=$(__box_env_path)' --hostname '$(@host uname -n)'" \
+      --additional-flags "--env 'PATH=$(__box_env_path)' --hostname '$(@host uname -n)' --restart unless-stopped" \
       --additional-packages 'base-devel bat git less lesspipe neovim zsh' &&
       __box_image_prune &&
       __box_upgrade &&
