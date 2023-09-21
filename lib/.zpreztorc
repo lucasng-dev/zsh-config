@@ -17,8 +17,8 @@ zstyle ':prezto:load' pmodule \
   'utility' \
   'completion' \
   'history-substring-search' \
+  '_linux' \
   '_upgrade' \
-  '_distrobox' \
   '_tab-complete' \
   '_starship' \
   '_direnv'
