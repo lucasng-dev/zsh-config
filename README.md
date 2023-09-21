@@ -55,3 +55,10 @@ These local user home files, if existent, will be loaded in the following order:
 | `~/.zprestorc`       | If necessary, allows changes on Prezto config           | Interactive shell only |
 | `~/.zlogin`          | Unusual, interactive shell, after open                  | Interactive shell only |
 | `~/.zlogout`         | Unusual, interactive shell, before exit                 | Interactive shell only |
+
+## Extra config files used by modules
+
+| User config file | Usage                         | Loaded on       |
+| ---------------- | ----------------------------- | --------------- |
+| `~/.host`        | Script to provision host      | `@host upgrade` |
+| `~/.box`         | Script to provision distrobox | `@box upgrade`  |
