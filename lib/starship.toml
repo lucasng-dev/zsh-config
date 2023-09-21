@@ -47,7 +47,7 @@ symbol = " "
 symbol = " "
 
 [haxe]
-symbol = "⌘ "
+symbol = " "
 
 [hg_branch]
 symbol = " "
@@ -67,7 +67,6 @@ symbol = " "
 
 [memory_usage]
 symbol = "󰍛 "
-disabled = false
 
 [meson]
 symbol = "󰔷 "
@@ -131,7 +130,7 @@ display_private = true
 disabled = false
 
 [pijul_channel]
-symbol = "🪺 "
+symbol = " "
 
 [python]
 symbol = " "
@@ -147,9 +146,6 @@ symbol = " "
 
 [scala]
 symbol = " "
-
-[spack]
-symbol = "🅢 "
 
 [status]
 disabled = false
