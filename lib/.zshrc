@@ -7,10 +7,7 @@ source "$ZDOTDIR/.zprezto/runcoms/zshrc"
 export HISTFILE=/dev/null
 
 # zsh
-setopt nobeep nolistbeep nohistbeep
-
-# update
-alias @zshup='git -C "$ZDOTDIR/.." pull >/dev/null; zsh "$ZDOTDIR/../install.zsh"'
+setopt nobeep nolistbeep nohistbeep histignoredups
 
 # list
 if command -v exa &>/dev/null; then
@@ -116,7 +113,7 @@ if ! command -v docker-compose &>/dev/null && command -v podman-compose &>/dev/n
   alias docker-compose='podman-compose'
 fi
 if { [[ -f /run/.containerenv ]] || [[ -f /.dockerenv ]]; } && ! command -v distrobox; then
-  alias distrobox='distrobox-host-exec distrobox'
+  alias distrobox='/usr/bin/distrobox-host-exec distrobox'
 fi
 
 # git

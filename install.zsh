@@ -1,9 +1,7 @@
 #!/usr/bin/env zsh
 set -eu -o pipefail
 
-echo
-echo '### ZSH-CONFIG ###'
-echo
+echo && echo '### ZSH CONFIG ###' && echo
 
 script_dir=${0:A:h}
 if [[ -z "$script_dir" ]] || [[ "$script_dir" == '/' ]] || [[ "$script_dir" == ~ ]]; then
@@ -17,8 +15,7 @@ ZDOTDIR=$script_dir/lib
 echo '*** GIT INFO ***'
 echo "Commit: $(git -C "$script_dir" rev-parse --short HEAD)"
 echo "Date: $(git -C "$script_dir" --no-pager log -1 --format='%cd')"
-echo '>>> OK <<<'
-echo
+echo '>>> OK <<<' && echo
 
 echo '*** PREZTO INSTALL ***'
 ZPREZTODIR=$ZDOTDIR/.zprezto
@@ -31,16 +28,14 @@ else
 fi
 echo "Commit: $(git -C "$ZPREZTODIR" rev-parse --short HEAD)"
 echo "Date: $(git -C "$ZPREZTODIR" --no-pager log -1 --format='%cd')"
-echo '>>> OK <<<'
-echo
+echo '>>> OK <<<' && echo
 
 echo '*** STARSHIP INSTALL ***'
 STARSHIPDIR=$ZDOTDIR/.starship
 mkdir -p "$STARSHIPDIR"
 wget --no-hsts --no-verbose -O - https://raw.githubusercontent.com/starship/starship/master/install/install.sh | sh -s -- --bin-dir "$STARSHIPDIR" -y >/dev/null
 "$STARSHIPDIR/starship" --version
-echo '>>> OK <<<'
-echo
+echo '>>> OK <<<' && echo
 
 echo '*** FONT INSTALL ***'
 font_file=FiraCode.zip
@@ -58,8 +53,7 @@ font_subdir=$font_user_dir/$(basename "$font_file" '.zip')
 rm -rf "$font_subdir"
 unzip -q -o -d "$font_subdir" "$font_download_dir/$font_file"
 echo "$font_subdir"
-echo '>>> OK <<<'
-echo
+echo '>>> OK <<<' && echo
 
 echo '*** ZSH CONFIG ENABLE ***'
 touch ~/.zshenv
@@ -69,5 +63,22 @@ cat <<EOT >~/.zshenv
 export ZDOTDIR='$ZDOTDIR' && if [[ -s "\$ZDOTDIR/.zshenv" ]]; then source "\$ZDOTDIR/.zshenv"; fi # points to 'zsh-config' project
 $zshenv_previous
 EOT
-echo '>>> OK <<<'
-echo
+echo '>>> OK <<<' && echo
+
+if [[ "$SHELL" != 'zsh' ]] && [[ "$SHELL" != *'/zsh' ]]; then
+  echo '*** DEFAULT SHELL ***'
+  # shellcheck disable=SC2207
+  shells=(/usr/bin/zsh /bin/zsh $(grep '^/.*/zsh$' /etc/shells 2>/dev/null || true) $(command -v zsh 2>/dev/null || true))
+  for shell_bin in "${shells[@]}"; do
+    if [[ -x "$shell_bin" ]]; then break; fi
+  done
+  if [[ ! -x "$shell_bin" ]]; then
+    echo "Zsh bin not found!" 1>&2 && return 1
+  fi
+  if command -v usermod &>/dev/null; then
+    sudo usermod --shell "$shell_bin" "$USER"
+  else
+    sudo chsh --shell "$shell_bin" "$USER"
+  fi
+  echo '>>> OK <<<' && echo
+fi
