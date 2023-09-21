@@ -9,30 +9,53 @@ export HISTFILE=/dev/null
 # path
 # shellcheck disable=SC2034
 typeset -gU cdpath fpath mailpath path
-# shellcheck disable=SC1036,SC2206
-path=(
-  ~/.local/bin(N)
-  /opt/homebrew/{,s}bin(N)
-  {,/var/lib/snapd}/snap/bin(N)
-  /opt/local/{,s}bin(N)
-  /usr/local/{,s}bin(N)
-  /usr/{,s}bin(N)
-  /{,s}bin(N)
+# shellcheck disable=SC2206
+__path=(
+  ~/.local/bin
+  ~/bin
+  /opt/homebrew/bin
+  /var/lib/snapd/snap/bin
+  /snap/bin
+  /usr/local/bin
+  /usr/local/sbin
+  /usr/bin
+  /usr/sbin
+  /bin
+  /sbin
   $path
 )
-for __path in "${path[@]}"; do
-  if [[ ! -d "$__path/" ]]; then
-    path=("${path[@]:#$__path}") # remove
-  fi
+path=()
+for __path_item in "${__path[@]}"; do
+  [[ ! -d "$__path_item/" ]] && continue
+  case "$__path_item" in
+  /snap/bin) [[ "$__path_item" -ef /var/lib/snapd/snap/bin ]] && continue ;;
+  /bin) [[ "$__path_item" -ef /usr/bin ]] && continue ;;
+  /sbin) [[ "$__path_item" -ef /usr/sbin ]] && continue ;;
+  esac
+  path+=("$__path_item")
 done
-unset __path
+unset __path __path_item
 export PATH
+
+# user
+if command -v id &>/dev/null; then
+  if [[ -z "$USER" ]]; then USER=$(id -nu) && export USER; fi
+  if [[ -z "$LOGNAME" ]]; then LOGNAME=$USER && export LOGNAME; fi
+  if [[ -z "$EUID" ]]; then EUID=$(id -u) && export EUID; fi
+  if [[ -z "$UID" ]]; then UID=$(id -ru) && export UID; fi
+  if [[ -z "$GID" ]]; then GID=$(id -rg) && export GID; fi
+fi
+
+# hostname
+if [[ -z "${HOSTNAME:-}" ]]; then
+  HOSTNAME=$(hostnamectl --transient 2>/dev/null || hostname 2>/dev/null || uname -n >2/dev/null || true) && export HOSTNAME
+fi
 
 # lang
 if [[ -z "${LANG:-}" ]]; then
   export LANG='en_US.UTF-8'
 fi
-if [[ "$(locale 2>&1)" == *'Cannot set LC_ALL'* ]]; then
+if [[ "$(LANG=C locale 2>&1)" == *'Cannot set LC_ALL'* ]]; then
   export LC_ALL='C.UTF-8'
 fi
 
