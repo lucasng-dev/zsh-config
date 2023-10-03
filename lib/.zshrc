@@ -10,7 +10,13 @@ export HISTFILE=/dev/null
 setopt nobeep nolistbeep nohistbeep histignoredups
 
 # list
-if command -v exa &>/dev/null; then
+if command -v eza &>/dev/null; then
+  alias eza='eza --color=auto --group-directories-first --binary --header --icons --group --octal-permissions'
+  alias ls='eza'
+  alias l='eza -1a'
+  alias ll='eza -l'
+  alias la='eza -la'
+elif command -v exa &>/dev/null; then
   alias exa='exa --color=auto --group-directories-first --binary --header --icons --group --octal-permissions'
   alias ls='exa'
   alias l='exa -1a'
