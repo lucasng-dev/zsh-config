@@ -59,10 +59,10 @@ echo '*** ZSH CONFIG ENABLE ***'
 touch ~/.zshenv
 sed -i '/ZDOTDIR=/d' ~/.zshenv || true
 zshenv_previous=$(cat ~/.zshenv)
-cat <<EOT >~/.zshenv
+cat <<EOF >~/.zshenv
 export ZDOTDIR='$ZDOTDIR' && if [[ -s "\$ZDOTDIR/.zshenv" ]]; then source "\$ZDOTDIR/.zshenv"; fi # points to 'zsh-config' project
 $zshenv_previous
-EOT
+EOF
 echo '>>> OK <<<' && echo
 
 if [[ "$SHELL" != 'zsh' ]] && [[ "$SHELL" != *'/zsh' ]]; then
