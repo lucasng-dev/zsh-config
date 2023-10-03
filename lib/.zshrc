@@ -118,7 +118,7 @@ fi
 if ! command -v docker-compose &>/dev/null && command -v podman-compose &>/dev/null; then
   alias docker-compose='podman-compose'
 fi
-if [[ -n "${CONTAINER_ID:-}" ]] && ! command -v distrobox; then
+if [[ -n "${CONTAINER_ID:-}" ]] && ! command -v distrobox &>/dev/null; then
   alias distrobox='/usr/bin/distrobox-host-exec distrobox'
 fi
 
