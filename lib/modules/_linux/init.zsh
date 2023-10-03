@@ -214,7 +214,7 @@ function __box_upgrade() {
     echo '*** BASE PACKAGES ***'
     yay -Syu --noconfirm
     yay -S --noconfirm --needed --repo \
-      bat bc bind btop cmatrix curl direnv exa fd ffmpeg fzf git git-lfs htop imagemagick inetutils inxi iperf3 jq less lesspipe \
+      bat bc bind btop cmatrix curl direnv eza fd ffmpeg fzf git git-lfs htop imagemagick inetutils inxi iperf3 jq less lesspipe \
       mc mtr ncdu neofetch neovim net-tools onefetch openssl p7zip rsync shellcheck shfmt speedtest-cli tldr tmux traceroute tree \
       unarchiver unrar unzip xclip xsel wget whois wl-clipboard yq zip
     echo '>>> OK <<<' && echo
