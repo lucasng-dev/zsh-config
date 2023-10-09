@@ -60,11 +60,11 @@ if [[ "$(LANG=C locale 2>&1)" == *'Cannot set LC_ALL'* ]]; then
 fi
 
 # concat / pager
-export LESS='-cgiKQnR --no-vbell'
+export LESS='-cgiKQnR --no-vbell +p0'
 export LESSHISTFILE='-'
 if command -v bat &>/dev/null; then
   export PAGER=bat
-  export BAT_PAGER="less $LESS -L"
+  export BAT_PAGER="less -L $LESS"
   export MANPAGER='bat -l man -p'
 else
   export PAGER=less
