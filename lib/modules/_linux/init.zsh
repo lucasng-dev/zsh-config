@@ -1,320 +1,365 @@
-DBX_CONTAINER_MANAGER=docker
-if [[ -z "${CONTAINER_ID:-}" ]]; then
-  if zsh -c 'command -v podman' &>/dev/null; then DBX_CONTAINER_MANAGER=podman; fi
-else
-  if /usr/bin/distrobox-host-exec zsh -c 'command -v podman' &>/dev/null; then DBX_CONTAINER_MANAGER=podman; fi
-fi
-export DBX_CONTAINER_MANAGER
-
-function @box() {
-  case "${1:-}" in
-  help | --help | -h) __box_help ;;
-  exists) __box_exists ;;
-  create) __box_create ;;
-  run) shift 1 && __box_run "$@" ;;
-  enter) __box_enter ;;
-  stats) __box_stats ;;
-  logs) __box_logs ;;
-  stop) __box_stop ;;
-  rm) __box_rm ;;
-  upgrade) __box_upgrade ;;
-  *) if [[ $# -gt 0 ]]; then __box_run "$@"; else __box_enter; fi ;;
-  esac
-}
+### HOST FUNCTIONS ###
 
 function @host() {
-  case "${1:-}" in
-  help | --help | -h) __host_help ;;
-  run) shift 1 && __host_run "$@" ;;
-  enter) __host_enter ;;
-  logs) __host_logs ;;
-  upgrade) __host_upgrade ;;
-  *) if [[ $# -gt 0 ]]; then __host_run "$@"; else __host_enter; fi ;;
-  esac
+	(set -eu -o pipefail && __host_cmd "$@")
 }
 
-function __box_help() {
-  command cat <<EOF
-Run commands on distrobox container.
-
-If the shell script '~/.box' exists, it is used for provisioning the container during
-'@box create' or '@box upgrade' commands, allowing to add any extra package or feature.
-
-Usage:
-  @box [ACTION | COMMANDS...]
-
-Actions:
-  @box [COMMANDS...]        run a command on container or open an interactive shell
-  @box create               create and provision the container
-  @box enter                open an interactive shell on container
-  @box exists               check if the container exists, shows an error message if not
-  @box help                 show this help
-  @box logs                 show the container logs
-  @box rm                   remove the container
-  @box run [COMMANDS...]    run a command on container
-  @box stats                show the container stats
-  @box stop                 stop the container
-  @box upgrade              upgrade and run the ~/.box provision script on container
-
-See also:
-  @host [COMMANDS...]       run a command on host when inside the container
-EOF
+function __host_cmd() {
+	local __command
+	if [[ $# -ge 1 ]]; then __command="$1" && shift 1; fi
+	case "$__command" in
+	exec | run) __host_exec "$@" ;;
+	enter | shell) __host_enter ;;
+	logs) __host_logs ;;
+	upgrade | update) __host_upgrade ;;
+	*) if [[ $# -gt 0 ]]; then __host_exec "$@"; else __host_enter; fi ;;
+	esac
 }
 
-function __host_help() {
-  command cat <<EOF
-Run commands on host.
-
-If the shell script '~/.host' exists, it is used for provisioning the host during
-'@host upgrade' command.
-
-Usage:
-  @host [ACTION | COMMANDS...]
-
-Actions:
-  @host [COMMANDS...]       run a command on host or open an interactive shell
-  @host help                show this help
-  @host logs                show the host logs
-  @host run [COMMANDS...]   run a command on host
-  @host upgrade             upgrade and run the ~/.host provision script on host
-
-See also:
-  @box [COMMANDS...]        run a command inside the container when on host
-EOF
-}
-
-function __box_exists() {
-  if [[ -z "${CONTAINER_ID:-}" ]]; then
-    "$DBX_CONTAINER_MANAGER" container inspect distrobox &>/dev/null ||
-      { echo "Container 'distrobox' does not exist!" 1>&2 && return 1; }
-  else
-    return 0
-  fi
-}
-
-function __box_create() {
-  echo && echo '### BOX CREATE ###' && echo
-  if [[ -z "${CONTAINER_ID:-}" ]]; then
-    __box_exists &>/dev/null && echo 'Container already exists!' 1>&2 && return 1
-    local image=quay.io/toolbx-images/archlinux-toolbox:latest
-    local env_path="$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
-    local restart_policy=no
-    if [[ "$DBX_CONTAINER_MANAGER" == 'podman' ]]; then
-      restart_policy=unless-stopped
-    fi
-    local base_packages='base-devel bat git less lesspipe neovim zsh'
-    distrobox-create --yes --no-entry --name distrobox \
-      --pull --image "$image" \
-      --additional-flags "--env 'PATH=$env_path' --hostname '$HOSTNAME' --restart '$restart_policy'" \
-      --additional-packages "$base_packages" &&
-      { "$DBX_CONTAINER_MANAGER" image prune --force &>/dev/null || true; } &&
-      __box_upgrade &&
-      __box_enter
-  else
-    echo "Command 'create' unavailable inside the distrobox container!" 1>&2 && return 126
-  fi
-}
-
-function __box_run() {
-  if [[ -z "${CONTAINER_ID:-}" ]]; then
-    __box_exists && distrobox-enter --name distrobox -- "$@"
-  else
-    "$@"
-  fi
-}
-
-function __host_run() {
-  if [[ -n "${CONTAINER_ID:-}" ]]; then
-    /usr/bin/distrobox-host-exec "$@"
-  else
-    "$@"
-  fi
-}
-
-function __box_enter() {
-  if [[ -z "${CONTAINER_ID:-}" ]]; then
-    __box_run /usr/bin/zsh -l
-  else
-    return 0
-  fi
+function __host_exec() {
+	[[ $# -eq 0 ]] && echo 'Command is not specified!' 1>&2 && return 1
+	if [[ -n "${CONTAINER_ID:-${container:-}}" ]]; then
+		if [[ -n "${CONTAINER_ID:-}" ]] && [[ -x /usr/bin/distrobox-host-exec ]]; then
+			/usr/bin/distrobox-host-exec "$@"
+		elif whence -p host-spawn &>/dev/null; then
+			command host-spawn "$@"
+		else
+			command flatpak-spawn --host --env='TERM=xterm-256color' "$@"
+		fi
+	else
+		"$@"
+	fi
 }
 
 function __host_enter() {
-  if [[ -n "${CONTAINER_ID:-}" ]]; then
-    __host_run zsh -l
-  else
-    return 0
-  fi
-}
-
-function __box_stats() {
-  __host_run watch "$DBX_CONTAINER_MANAGER" container stats --no-stream distrobox
-}
-
-function __box_logs() {
-  __host_run "$DBX_CONTAINER_MANAGER" container logs --follow distrobox
+	if [[ -n "${CONTAINER_ID:-${container:-}}" ]]; then __host_exec zsh -l; fi
 }
 
 function __host_logs() {
-  __host_run journalctl -xef
+	__host_exec journalctl -xef
+}
+
+### DISTROBOX FUNCTIONS ###
+
+DBX_CONTAINER_MANAGER='docker'
+__host_exec zsh -c 'whence -p podman' &>/dev/null && DBX_CONTAINER_MANAGER='podman'
+export DBX_CONTAINER_MANAGER
+
+function @box() {
+	(set -eu -o pipefail && __box_cmd "$@")
+}
+
+function __box_cmd() {
+	local __command distro_name
+	if [[ $# -ge 1 ]]; then __command="$1" && shift 1; fi
+	if [[ $# -ge 1 ]]; then distro_name="$1" && shift 1; fi
+	if [[ "$__command" == 'list' ]]; then
+		__box_list
+	elif [[ "$distro_name" == '--all' ]]; then
+		if [[ "$__command" =~ ^(stop|rm|delete|upgrade|update)$ ]]; then
+			for distro_name in $(__box_list); do (__box_cmd "$__command" "$distro_name" "$@"); done
+		else
+			echo "Command '$__command' unavailable when '--all' option is specified!" 1>&2 && return 126
+		fi
+	else
+		if [[ -z "$distro_name" ]]; then
+			if [[ -n "${CONTAINER_ID:-}" ]]; then
+				distro_name="$(echo -n "$CONTAINER_ID" | command sed 's/^distrobox-//g')" # current container
+			else
+				# shellcheck disable=SC2207
+				local __box_list=($(__box_list))
+				if [[ "${#__box_list[@]}" -eq 1 ]]; then
+					distro_name="${__box_list[1]}" # single container
+				else
+					echo 'Linux distro name is not specified!' 1>&2 && return 1
+				fi
+			fi
+		fi
+		case "$__command" in
+		exists) __box_exists ;;
+		create) __box_create ;;
+		exec | run) __box_exec "$@" ;;
+		enter | shell) __box_enter ;;
+		stats) __box_stats ;;
+		logs) __box_logs ;;
+		stop) __box_stop ;;
+		rm | delete) __box_rm ;;
+		upgrade | update) __box_upgrade ;;
+		*) if [[ $# -gt 0 ]]; then __box_exec "$@"; else __box_enter; fi ;;
+		esac
+	fi
+}
+
+function __box_list() {
+	{ __host_exec "$DBX_CONTAINER_MANAGER" container ls --all --format '{{.Names}}' | command grep '^distrobox-' | command sed 's/^distrobox-//g' | command sort -u; } || true
+}
+
+function __box_exists() {
+	__host_exec "$DBX_CONTAINER_MANAGER" container inspect "distrobox-${distro_name}" &>/dev/null ||
+		{ echo "Container 'distrobox-${distro_name}' does not exist!" 1>&2 && return 1; }
+	echo 'OK'
+}
+
+function __box_create() {
+	echo && echo "### BOX CREATE: ${distro_name:u} ###" && echo
+	__box_exists &>/dev/null && echo "Container 'distrobox-${distro_name}' already exists!" 1>&2 && return 1
+	echo '*** CONTAINER ***'
+	local image='' pkgs=(zsh fontconfig git git-lfs)
+	# https://github.com/89luca89/distrobox/blob/main/docs/compatibility.md#containers-distros
+	case "$distro_name" in
+	alma) image='quay.io/toolbx-images/almalinux-toolbox:latest' && pkgs+=(bat eza) ;;
+	alpine) image='quay.io/toolbx-images/alpine-toolbox:latest' && pkgs+=(bat eza micro starship gcompat) ;;
+	amazon) image='quay.io/toolbx-images/amazonlinux-toolbox:latest' && pkgs+=() ;;
+	arch) image='quay.io/toolbx/arch-toolbox:latest' && pkgs+=(bat eza micro starship base-devel) ;;
+	centos) image='quay.io/toolbx-images/centos-toolbox:latest' && pkgs+=(bat eza) ;;
+	debian) image='quay.io/toolbx-images/debian-toolbox:testing' && pkgs+=(bat eza micro) ;;
+	fedora) image='registry.fedoraproject.org/fedora-toolbox:latest' && pkgs+=(bat eza micro) ;;
+	opensuse) image='registry.opensuse.org/opensuse/distrobox:latest' && pkgs+=(bat eza micro-editor starship) ;;
+	rhel) image='quay.io/toolbx-images/rhel-toolbox:latest' && pkgs+=(bat eza) ;;
+	rocky) image='quay.io/toolbx-images/rockylinux-toolbox:latest' && pkgs+=(bat eza) ;;
+	ubuntu) image='quay.io/toolbx/ubuntu-toolbox:latest' && pkgs+=(bat eza micro) ;;
+	*) echo "Unsupported distro '$distro_name'" 1>&2 && return 1 ;;
+	esac
+	__host_exec distrobox-create --yes --no-entry \
+		--name "distrobox-${distro_name}" --hostname "$HOSTNAME" \
+		--pull --image "$image" \
+		--additional-packages "${pkgs[*]}" &&
+		{ __host_exec "$DBX_CONTAINER_MANAGER" image prune --force &>/dev/null || true; } &&
+		__box_upgrade &&
+		__box_enter
+}
+
+function __box_exec() {
+	[[ $# -eq 0 ]] && echo 'Command is not specified!' 1>&2 && return 1
+	if [[ "${CONTAINER_ID:-}" != "distrobox-${distro_name}" ]]; then
+		__box_exists >/dev/null && __host_exec distrobox-enter "distrobox-${distro_name}" -- "$@"
+	else
+		"$@"
+	fi
+}
+
+function __box_enter() {
+	if [[ "${CONTAINER_ID:-}" != "distrobox-${distro_name}" ]]; then __box_exec zsh -l; fi
+}
+
+function __box_stats() {
+	__host_exec watch "$DBX_CONTAINER_MANAGER" container stats --no-stream "distrobox-${distro_name}"
+}
+
+function __box_logs() {
+	__host_exec "$DBX_CONTAINER_MANAGER" container logs --follow "distrobox-${distro_name}"
 }
 
 function __box_stop() {
-  echo && echo '### BOX STOP ###' && echo
-  if [[ -z "${CONTAINER_ID:-}" ]]; then
-    distrobox-stop --yes --name distrobox
-  else
-    echo "Command 'stop' unavailable inside the distrobox container!" 1>&2 && return 126
-  fi
+	echo && echo "### BOX STOP: ${distro_name:u} ###" && echo
+	if [[ "${CONTAINER_ID:-}" != "distrobox-${distro_name}" ]]; then
+		__host_exec distrobox-stop --yes "distrobox-${distro_name}"
+		__host_exec "$DBX_CONTAINER_MANAGER" container stop "distrobox-${distro_name}" &>/dev/null || true
+	else
+		echo "Command 'stop' unavailable inside the distrobox container!" 1>&2 && return 126
+	fi
 }
 
 function __box_rm() {
-  echo && echo '### BOX REMOVE ###' && echo
-  if [[ -z "${CONTAINER_ID:-}" ]]; then
-    __box_stop &>/dev/null || true
-    distrobox-rm --force `#--name` distrobox
-  else
-    echo "Command 'rm' unavailable inside the distrobox container!" 1>&2 && return 126
-  fi
+	echo && echo "### BOX REMOVE: ${distro_name:u} ###" && echo
+	if [[ "${CONTAINER_ID:-}" != "distrobox-${distro_name}" ]]; then
+		__box_stop &>/dev/null || true
+		__host_exec distrobox-rm --yes --force "distrobox-${distro_name}"
+		__host_exec "$DBX_CONTAINER_MANAGER" container rm --force "distrobox-${distro_name}" &>/dev/null || true
+		__host_exec rm -rf "${XDG_CACHE_HOME:-$HOME/.cache}/distrobox/distrobox-${distro_name}"
+	else
+		echo "Command 'rm' unavailable inside the distrobox container!" 1>&2 && return 126
+	fi
+}
+
+### UPGRADE FUNCTIONS ###
+
+function __host_upgrade() {
+	if [[ -n "${CONTAINER_ID:-}" ]]; then
+		__host_exec zsh -i -c __host_upgrade
+		return $?
+	fi
+	echo && echo '### HOST UPGRADE ###' && echo
+	__linux_upgrade
+	if [[ -s ~/.host ]]; then
+		echo '*** PROVISIONING SCRIPT ***'
+		command zsh -eu -o pipefail ~/.host
+		echo '>>> OK <<<' && echo
+	fi
+	__linux_cleanup
 }
 
 function __box_upgrade() {
-  if [[ -z "${CONTAINER_ID:-}" ]]; then
-    __box_run /usr/bin/zsh -i -c __box_upgrade
-    return $?
-  fi
-  echo && echo '### BOX UPGRADE ###' && echo
-  (
-    set -eu -o pipefail
-
-    echo '*** ZSH ***'
-    /usr/bin/sudo usermod --shell /usr/bin/zsh "$(id -nu)"
-    echo '>>> OK <<<' && echo
-
-    echo '*** PACMAN ***'
-    /usr/bin/sudo pacman-key --init
-    /usr/bin/sudo sed -i '/^\(Color\|ILoveCandy\)\s*$/d' /etc/pacman.conf
-    /usr/bin/sudo sed -i 's/^\(#\s*Misc options\s*\)$/\1\nColor\nILoveCandy/g' /etc/pacman.conf
-    echo '>>> OK <<<' && echo
-
-    echo '*** YAY ***'
-    local builddir=~/.cache/yay
-    mkdir -p "$builddir"
-    if ! /usr/bin/zsh -c 'command -v yay' &>/dev/null; then
-      rm -rf "$builddir/yay-bin"
-      git clone https://aur.archlinux.org/yay-bin.git "$builddir/yay-bin"
-      /usr/bin/zsh -c "cd '$builddir/yay-bin' && makepkg -si --noconfirm --needed --clean --cleanbuild --skippgpcheck"
-    fi
-    rm -f ~/.config/yay/config.json
-    yay -Y --save --needed --devel --builddir "$builddir" --batchinstall --nocombinedupgrade --cleanafter --removemake \
-      --nocleanmenu --answerclean A --nodiffmenu --answerdiff N --editmenu --answeredit A --editor /usr/bin/nvim \
-      --mflags '--noconfirm --needed --clean --cleanbuild --skippgpcheck'
-    echo '>>> OK <<<' && echo
-
-    echo '*** BASE PACKAGES ***'
-    yay -Syu --noconfirm
-    yay -S --noconfirm --needed --repo \
-      bat bc bind btop cabextract cmatrix curl direnv eza fd ffmpeg fzf git git-lfs htop imagemagick inetutils inxi iperf3 jq less lesspipe \
-      mc mtr ncdu neofetch neovim net-tools onefetch openssl p7zip rsync shellcheck shfmt speedtest-cli tldr tmux traceroute tree unarchiver \
-      unrar unzip xclip xsel wget whois wl-clipboard yq zip \
-      base-devel cmake make meson ninja
-    echo '>>> OK <<<' && echo
-
-    echo '*** REDIRECT HOST COMMANDS ***'
-    /usr/bin/distrobox-host-exec --yes true # download host-spawn
-    local host_cmd
-    for host_cmd in xdg-open docker docker-compose podman podman-compose flatpak snap; do
-      if __host_run zsh -c "command -v '$host_cmd'" &>/dev/null; then
-        echo "command: $host_cmd"
-        /usr/bin/sudo ln -sfT /usr/bin/distrobox-host-exec "/usr/local/bin/$host_cmd"
-      fi
-    done
-    echo 'command: sudo (wrapper)'
-    /usr/bin/sudo tee /usr/local/bin/sudo >/dev/null <<EOF
-#!/usr/bin/zsh
-host_bin=\$(echo "\${1:-}" | sed 's|^/usr/local/bin/||')
-if [[ -n "\$(find /usr/local/bin/ -mindepth 1 -maxdepth 1 -name "\$host_bin" -lname /usr/bin/distrobox-host-exec 2>/dev/null)" ]]; then
-  shift 1 && exec /usr/bin/distrobox-host-exec sudo -p "[sudo] password for \$(id -nu) (host): " "\$host_bin" "\$@" # host sudo
-fi
-exec /usr/bin/sudo "\$@" # container sudo
-EOF
-    /usr/bin/sudo chmod +x /usr/local/bin/sudo
-    echo '>>> OK <<<' && echo
-
-    if [[ -s ~/.box ]]; then
-      echo '*** PROVISIONING SCRIPT ***'
-      /usr/bin/zsh -eu -o pipefail ~/.box
-      echo '>>> OK <<<' && echo
-    fi
-
-    echo '*** CLEANUP ***'
-    { yay -Qtdq | yay -Rns --noconfirm - &>/dev/null || true; }
-    yay -Sc --noconfirm >/dev/null
-    echo '>>> OK <<<' && echo
-  )
+	if [[ "${CONTAINER_ID:-}" != "distrobox-${distro_name}" ]]; then
+		__box_exec env distro_name="${distro_name}" zsh -i -c __box_upgrade
+		return $?
+	fi
+	echo && echo "### BOX UPGRADE: ${distro_name:u} ###" && echo
+	__box_configure
+	__linux_upgrade
+	if [[ -s ~/.box ]]; then
+		echo '*** PROVISIONING SCRIPT ***'
+		command zsh -eu -o pipefail ~/.box # all distros
+		echo '>>> OK <<<' && echo
+	fi
+	if [[ -s ~/.box-"${distro_name}" ]]; then
+		echo "*** PROVISIONING SCRIPT: ${distro_name:u} ***"
+		command zsh -eu -o pipefail ~/.box-"${distro_name}" # distro specific
+		echo '>>> OK <<<' && echo
+	fi
+	__linux_cleanup
 }
 
-function __host_upgrade() {
-  if [[ -n "${CONTAINER_ID:-}" ]]; then
-    __host_run zsh -i -c __host_upgrade
-    return $?
-  fi
-  echo && echo '### HOST UPGRADE ###' && echo
-  (
-    set -eu -o pipefail
+function __linux_upgrade() {
+	if [[ -z "${CONTAINER_ID:-${container:-}}" ]] && whence -p rpm-ostree &>/dev/null; then
+		echo '*** UPGRADE: RPM-OSTREE ***' && sudo rpm-ostree refresh-md --force && sudo rpm-ostree upgrade --cache-only && echo '>>> OK <<<' && echo
+	elif whence -p dnf &>/dev/null; then
+		echo '*** UPGRADE: DNF ***' && sudo dnf upgrade --refresh -y && echo '>>> OK <<<' && echo
+	elif whence -p yum &>/dev/null; then
+		echo '*** UPGRADE: YUM ***' && sudo yum upgrade --refresh -y && echo '>>> OK <<<' && echo
+	elif whence -p zypper &>/dev/null; then
+		echo '*** UPGRADE: ZYPPER ***' && sudo zypper refresh && sudo zypper update -y && echo '>>> OK <<<' && echo
+	elif whence -p apt &>/dev/null; then
+		echo '*** UPGRADE: APT ***' && sudo apt update && sudo apt upgrade -y && echo '>>> OK <<<' && echo
+	elif whence -p yay &>/dev/null; then
+		echo '*** UPGRADE: YAY ***' && command yay -Syu --noconfirm --combinedupgrade && echo '>>> OK <<<' && echo
+	elif whence -p paru &>/dev/null; then
+		echo '*** UPGRADE: PARU ***' && command paru -Syu --noconfirm --combinedupgrade && echo '>>> OK <<<' && echo
+	elif whence -p pacman &>/dev/null; then
+		echo '*** UPGRADE: PACMAN ***' && sudo pacman -Syu --noconfirm && echo '>>> OK <<<' && echo
+	elif whence -p apk &>/dev/null; then
+		echo '*** UPGRADE: APK ***' && sudo apk update && sudo apk upgrade && echo '>>> OK <<<' && echo
+	fi
+	if whence -p brew &>/dev/null; then
+		echo '*** UPGRADE: HOMEBREW ***' && command brew update -q && command brew upgrade -q && echo '>>> OK <<<' && echo
+	fi
+	if [[ -z "${CONTAINER_ID:-${container:-}}" ]]; then
+		if whence -p flatpak &>/dev/null; then
+			echo '*** UPGRADE: FLATPAK ***' && sudo flatpak update -y && command flatpak --user update -y && echo '>>> OK <<<' && echo
+		fi
+		if whence -p snap &>/dev/null; then
+			echo '*** UPGRADE: SNAP ***' && sudo snap refresh && echo '>>> OK <<<' && echo
+		fi
+	fi
+}
 
-    if command -v rpm-ostree &>/dev/null; then
-      echo '*** UPGRADE: RPM-OSTREE ***' && sudo rpm-ostree upgrade && echo '>>> OK <<<' && echo
-    elif command -v dnf &>/dev/null; then
-      echo '*** UPGRADE: DNF ***' && sudo dnf upgrade -y && echo '>>> OK <<<' && echo
-    elif command -v yum &>/dev/null; then
-      echo '*** UPGRADE: YUM ***' && sudo yum upgrade -y && echo '>>> OK <<<' && echo
-    elif command -v apt &>/dev/null; then
-      echo '*** UPGRADE: APT ***' && sudo apt update && sudo apt upgrade -y && echo '>>> OK <<<' && echo
-    elif command -v yay &>/dev/null; then
-      echo '*** UPGRADE: YAY ***' && yay -Syu --noconfirm && echo '>>> OK <<<' && echo
-    elif command -v pacman &>/dev/null; then
-      echo '*** UPGRADE: PACMAN ***' && sudo pacman -Syu --noconfirm && echo '>>> OK <<<' && echo
-    fi
-    if command -v flatpak &>/dev/null; then
-      echo '*** UPGRADE: FLATPAK ***' && sudo flatpak update -y && echo '>>> OK <<<' && echo
-    fi
-    if command -v snap &>/dev/null; then
-      echo '*** UPGRADE: SNAP ***' && sudo snap refresh && echo '>>> OK <<<' && echo
-    fi
+function __linux_cleanup() {
+	if [[ -z "${CONTAINER_ID:-${container:-}}" ]] && whence -p rpm-ostree &>/dev/null; then
+		echo '*** CLEANUP: RPM-OSTREE ***' && sudo rpm-ostree cleanup --base && echo '>>> OK <<<' && echo
+	elif whence -p dnf &>/dev/null; then
+		echo '*** CLEANUP: DNF ***' && sudo dnf autoremove -y && echo '>>> OK <<<' && echo
+	elif whence -p yum &>/dev/null; then
+		echo '*** CLEANUP: YUM ***' && sudo yum autoremove -y && echo '>>> OK <<<' && echo
+	elif whence -p zypper &>/dev/null; then
+		echo '*** CLEANUP: ZYPPER ***' && sudo zypper clean && echo '>>> OK <<<' && echo
+	elif whence -p apt &>/dev/null; then
+		echo '*** CLEANUP: APT ***' && sudo apt autoremove -y && echo '>>> OK <<<' && echo
+	elif whence -p yay &>/dev/null; then
+		echo '*** CLEANUP: YAY ***' && { command yay -Qtdq | command yay -Rns --noconfirm - 2>/dev/null || true; } && command yay -Sc --noconfirm >/dev/null && echo '>>> OK <<<' && echo
+	elif whence -p paru &>/dev/null; then
+		echo '*** CLEANUP: PARU ***' && { command paru -Qtdq | command paru -Rns --noconfirm - 2>/dev/null || true; } && command paru -Sc --noconfirm >/dev/null && echo '>>> OK <<<' && echo
+	elif whence -p pacman &>/dev/null; then
+		echo '*** CLEANUP: PACMAN ***' && { sudo pacman -Qtdq | sudo pacman -Rns --noconfirm - 2>/dev/null || true; } && sudo pacman -Sc --noconfirm >/dev/null && echo '>>> OK <<<' && echo
+	elif whence -p apk &>/dev/null; then
+		echo '*** CLEANUP: APK ***' && sudo apk cache clean && echo '>>> OK <<<' && echo
+	fi
+	if whence -p brew &>/dev/null; then
+		echo '*** CLEANUP: HOMEBREW ***' && command brew autoremove -q && echo '>>> OK <<<' && echo
+	fi
+	if [[ -z "${CONTAINER_ID:-${container:-}}" ]]; then
+		if whence -p flatpak &>/dev/null; then
+			echo '*** CLEANUP: FLATPAK ***' && sudo flatpak uninstall --unused -y && command flatpak --user uninstall --unused -y && echo '>>> OK <<<' && echo
+		fi
+		if whence -p snap &>/dev/null; then
+			echo '*** CLEANUP: SNAP ***' && (
+				local name version rev tracking publisher notes
+				# shellcheck disable=SC2034
+				while read -r name version rev tracking publisher notes; do
+					if [[ "$notes" == *disabled* ]]; then
+						sudo snap remove "$name" --revision="$rev"
+					fi
+				done < <(sudo env LANG=C snap list --all)
+			) && echo '>>> OK <<<' && echo
+		fi
+	fi
+}
 
-    if [[ -s ~/.host ]]; then
-      echo '*** PROVISIONING SCRIPT ***'
-      zsh -eu -o pipefail ~/.host
-      echo '>>> OK <<<' && echo
-    fi
+function __box_configure() {
+	echo '*** USER ***'
+	sudo usermod --shell "$(whence -p zsh)" "$(id -nu)" >/dev/null
+	sudo mkdir -p /var/lib/systemd/linger
+	sudo touch "/var/lib/systemd/linger/$USER"
+	echo '>>> OK <<<' && echo
 
-    if command -v rpm-ostree &>/dev/null; then
-      echo '*** CLEANUP: RPM-OSTREE ***' && true && echo '>>> OK <<<' && echo
-    elif command -v dnf &>/dev/null; then
-      echo '*** CLEANUP: DNF ***' && sudo dnf autoremove -y && echo '>>> OK <<<' && echo
-    elif command -v yum &>/dev/null; then
-      echo '*** CLEANUP: YUM ***' && sudo yum autoremove -y && echo '>>> OK <<<' && echo
-    elif command -v apt &>/dev/null; then
-      echo '*** CLEANUP: APT ***' && sudo apt autoremove -y && echo '>>> OK <<<' && echo
-    elif command -v yay &>/dev/null; then
-      echo '*** CLEANUP: YAY ***' && { yay -Qtdq | yay -Rns --noconfirm - 2>/dev/null || true; } && yay -Sc --noconfirm && echo '>>> OK <<<' && echo
-    elif command -v pacman &>/dev/null; then
-      echo '*** CLEANUP: PACMAN ***' && { sudo pacman -Qtdq | sudo pacman -Rns --noconfirm - 2>/dev/null || true; } && sudo pacman -Sc --noconfirm && echo '>>> OK <<<' && echo
-    fi
-    if command -v flatpak &>/dev/null; then
-      echo '*** CLEANUP: FLATPAK ***' && sudo flatpak uninstall --unused -y && echo '>>> OK <<<' && echo
-    fi
-    if command -v snap &>/dev/null; then
-      echo '*** CLEANUP: SNAP ***' && (
-        local name version rev tracking publisher notes
-        # shellcheck disable=SC2034
-        while read -r name version rev tracking publisher notes; do
-          if [[ "$notes" == *disabled* ]]; then
-            sudo snap remove "$name" --revision="$rev"
-          fi
-        done < <(LANG=C snap list --all)
-      ) && echo '>>> OK <<<' && echo
-    fi
-  )
+	if whence -p pacman &>/dev/null; then
+		echo '*** PACMAN ***'
+		if [[ -f /var/lib/pacman/db.lck ]] && ! command pgrep pacman &>/dev/null; then
+			sudo rm -f /var/lib/pacman/db.lck
+		fi
+		sudo sed -Ei \
+			-e '\/^(Color|ILoveCandy|NoExtract|NoProgressBar)\b/d' \
+			-e '0,/^(\[options\])/s//\1\nColor\nILoveCandy/' \
+			/etc/pacman.conf
+		sudo sed -Ei \
+			-e 's/^(OPTIONS=.*\s)(debug)(\b.*)$/\1!\2\3/g' \
+			-e "\/^PKGEXT=/c\PKGEXT='.pkg.tar'" \
+			/etc/makepkg.conf
+		if [[ ! -d /etc/pacman.d/gnupg/ ]]; then
+			# https://gitlab.archlinux.org/archlinux/archlinux-docker
+			sudo pacman-key --init
+			sudo pacman-key --populate
+		fi
+		echo '>>> OK <<<' && echo
+	fi
+
+	if whence -p locale-gen &>/dev/null && [[ -s /etc/locale.gen ]]; then
+		# shellcheck disable=SC2207
+		local locales=($(LC_ALL='' command locale 2>/dev/null | command grep -Eo '\b\w+\.UTF-8\b' | command sort -u))
+		local locales_hash && locales_hash=$(command sha512sum /etc/locale.gen)
+		local locale
+		for locale in "${locales[@]}"; do
+			sudo sed -Ei "s|^#\s*(${locale/./\\.})|\1|g" /etc/locale.gen
+		done
+		if [[ "$locales_hash" != "$(command sha512sum /etc/locale.gen)" ]]; then
+			echo '*** LOCALES ***'
+			if whence -p pacman &>/dev/null; then
+				# https://gitlab.archlinux.org/archlinux/archlinux-docker/-/issues/72
+				sudo pacman -S --noconfirm glibc >/dev/null
+			fi
+			sudo locale-gen
+			echo '>>> OK <<<' && echo
+		fi
+	fi
+
+	# https://github.com/89luca89/distrobox/issues/358
+	echo '*** FONT CACHE ***'
+	sudo sed -Ei "s|(<cachedir\s[^>]*prefix=\"xdg\"[^>]*>)[^<]*(</cachedir>)|\1distrobox/distrobox-${distro_name}/fontconfig\2|g" /etc/fonts/fonts.conf
+	echo '>>> OK <<<' && echo
+
+	echo '*** REDIRECT HOST COMMANDS ***'
+	/usr/bin/distrobox-host-exec --yes true # download host-spawn
+	local host_cmd
+	for host_cmd in virsh docker{,-compose} podman{,-compose} minikube flatpak snap xdg-open gtk-launch gnome-terminal tilix; do
+		if __host_exec zsh -c "whence -p '$host_cmd'" &>/dev/null; then
+			echo "command: $host_cmd"
+			sudo ln -sfT /usr/bin/distrobox-host-exec "/usr/local/bin/$host_cmd"
+		fi
+	done
+	echo '>>> OK <<<' && echo
+
+	if whence -p pacman &>/dev/null; then
+		echo '*** YAY ***'
+		local builddir="${XDG_CACHE_HOME:-$HOME/.cache}/yay" && command mkdir -p "$builddir"
+		if ! whence -p yay &>/dev/null; then
+			command rm -rf "$builddir/yay-bin"
+			command git clone https://aur.archlinux.org/yay-bin.git "$builddir/yay-bin"
+			local mflags=(--noconfirm --needed --clean --cleanbuild)
+			(cd "$builddir/yay-bin" && PATH='/usr/bin:/usr/sbin:/bin:/sbin' command makepkg -si "${mflags[@]}")
+			command rm -f ~/.config/yay/config.json
+			command yay -Y --save --mflags "${mflags[*]}"
+		fi
+		command yay -Y --save --needed --devel --builddir "$builddir" --batchinstall --combinedupgrade --cleanafter --removemake \
+			--answerclean A --diffmenu --answerdiff I --editmenu --answeredit A
+		echo '>>> OK <<<' && echo
+	fi
 }

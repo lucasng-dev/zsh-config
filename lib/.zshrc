@@ -1,129 +1,171 @@
+# shellcheck disable=SC2139,SC2154
 if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
 source "$ZDOTDIR/.zprezto/runcoms/zshrc"
 
 # >>> begin >>>
 
 # history
-export HISTFILE=/dev/null
+export HISTFILE='/dev/null'
 
-# zsh
+# zsh options
 setopt nobeep nolistbeep nohistbeep histignoredups
 
 # list
-if command -v eza &>/dev/null; then
-  alias eza='eza --color=auto --group-directories-first --binary --header --icons --group --octal-permissions'
-  alias ls='eza'
-  alias l='eza -1a'
-  alias ll='eza -l'
-  alias la='eza -la'
-elif command -v exa &>/dev/null; then
-  alias exa='exa --color=auto --group-directories-first --binary --header --icons --group --octal-permissions'
-  alias ls='exa'
-  alias l='exa -1a'
-  alias ll='exa -l'
-  alias la='exa -la'
+if whence -p eza &>/dev/null; then
+	alias eza='eza --color=auto --group-directories-first --binary --header --icons --group --octal-permissions'
+	alias ls='eza'
 else
-  alias ls='ls --color=auto --group-directories-first --kibibytes --human-readable'
-  alias l='ls -1A'
-  alias ll='ls -l'
-  alias la='ls -lA'
+	alias ls='ls --color=auto --group-directories-first --kibibytes --human-readable'
 fi
+alias l='ls -1A'
+alias ll='ls -l'
+alias la='ls -lA'
 
 # concat / pager
-if command -v bat &>/dev/null; then
-  alias less='bat'
-  alias cat='bat'
-  alias p='bat'
+if [[ "${PAGER:-}" == bat* ]]; then
+	alias bat="$PAGER --color=auto --wrap=never"
+	alias less='bat'
+	alias more='bat'
+	alias cat='bat'
+	alias p='bat'
 else
-  alias cat='less'
-  alias p='less'
+	alias more='less'
+	alias cat='less'
+	alias p='less'
 fi
 
 # editor / visual
-if command -v nvim &>/dev/null; then
-  alias vim='nvim'
-  alias vi='nvim'
-  alias v='nvim'
-  alias e='nvim'
-elif command -v vim &>/dev/null; then
-  alias vi='vim'
-  alias v='vim'
-  alias e='vim'
-else
-  alias vim='vi'
-  alias v='vi'
-  alias e='vi'
+alias edit="$EDITOR"
+alias e="$EDITOR"
+alias _edit='sudoedit'
+alias _e='sudoedit'
+alias v="$VISUAL"
+alias _v='sudoedit'
+if whence -p nvim &>/dev/null; then
+	alias vim='nvim'
+	alias vi='nvim'
+elif whence -p vim &>/dev/null; then
+	alias vi='vim'
+elif whence -p vi &>/dev/null; then
+	alias vim='vi'
 fi
 
-# finder
-if command -v fzf &>/dev/null; then
-  f() { if [[ $# -gt 0 ]]; then fzf --bind "enter:become($* {+})"; else fzf; fi; }
-fi
+# su
+alias _='sudo'
+
+# find / replace
+alias grep='grep --color=auto'
 
 # opener
-if command -v xdg-open &>/dev/null; then
-  alias o='xdg-open'
+if whence -p xdg-open &>/dev/null; then
+	alias open='xdg-open'
+	alias o='xdg-open'
+elif [[ "${OSTYPE:-}" == darwin* ]] && whence -p open &>/dev/null; then
+	alias o='open'
 fi
 
 # env
-env() { if [[ $# -gt 0 ]]; then command env "$@"; else command env | sort -f | { bat -l ini -p 2>/dev/null || less; }; fi; }
-printenv() { if [[ $# -gt 0 ]]; then command printenv "$@"; else command printenv | sort -f | { bat -l ini -p 2>/dev/null || less; }; fi; }
-
-# ssh
-alias ssh='ssh -t'
-alias s='ssh'
+function env() {
+	if [[ $# -gt 0 ]]; then
+		command env "$@"
+	elif [[ "${PAGER:-}" == bat* ]]; then
+		command env | command sort -f | bat -l ini -p
+	else
+		command env | command sort -f | command less
+	fi
+}
+function printenv() {
+	if [[ $# -gt 0 ]]; then
+		command printenv "$@"
+	elif [[ "${PAGER:-}" == bat* ]]; then
+		command printenv | command sort -f | bat -l ini -p
+	else
+		command printenv | command sort -f | command less
+	fi
+}
 
 # network
+alias ssh='ssh -t'
+alias s='ssh'
 alias ping='ping -O'
-if command -v mtr &>/dev/null; then
-  alias mtr='mtr -b -y 2'
-  alias traceroute='mtr'
+if whence -p mtr &>/dev/null; then
+	alias mtr='mtr -b -y 2'
+	alias traceroute='mtr'
+fi
+if whence -p ip &>/dev/null; then
+	alias ip='ip -color=auto'
+	alias ifconfig='ip address'
+fi
+if whence -p ss &>/dev/null; then
+	alias netstat='ss'
 fi
 
-# disk usage
-if command -v ncdu &>/dev/null; then
-  alias ncdu='ncdu -x'
-  alias du='ncdu'
+# filesystem
+if whence -p df &>/dev/null; then
+	alias df='df -kh'
+fi
+if whence -p ncdu &>/dev/null; then
+	alias ncdu='ncdu -x'
+	alias du='ncdu'
+elif whence -p du &>/dev/null; then
+	alias du='du -kh'
 fi
 
 # file manager
-if command -v mc &>/dev/null; then
-  alias mc='mc -u'
-fi
-
-# calculator
-if command -v bc &>/dev/null; then
-  alias bc='bc -q'
+if whence -p mc &>/dev/null; then
+	alias mc='mc -u'
 fi
 
 # help / manual
-h() { "$@" --help 2>&1 | { bat -l help -p 2>/dev/null || less; }; }
-m() { tldr "$@" 2>/dev/null || man "$@" 2>/dev/null || h "$@"; }
+function help() {
+	if [[ "${PAGER:-}" == bat* ]]; then
+		"$@" --help 2>&1 | bat -l help -p
+	else
+		"$@" --help 2>&1 | command less
+	fi
+}
+alias h='help'
+function manual() {
+	command tldr "$@" 2>/dev/null || command man "$@" 2>/dev/null || help "$@"
+}
+alias m='manual'
 
 # terminal
+alias @shell='clear; exec zsh'
 alias c='clear'
 alias x='exit'
-detach() {
-  nohup "$@" </dev/null &>/dev/null &
-  disown
+function detach() {
+	(
+		nohup "$@" </dev/null &>/dev/null &
+		disown &>/dev/null || true
+	)
 }
-if command -v cmatrix &>/dev/null; then
-  alias cmatrix='cmatrix -b'
+if whence -p fastfetch &>/dev/null; then
+	alias fastfetch='fastfetch --config paleofetch'
+	alias neofetch='fastfetch'
 fi
-
-# containers
-if ! command -v docker &>/dev/null && command -v podman &>/dev/null; then
-  alias docker='podman'
-fi
-if ! command -v docker-compose &>/dev/null && command -v podman-compose &>/dev/null; then
-  alias docker-compose='podman-compose'
-fi
-if [[ -n "${CONTAINER_ID:-}" ]] && ! command -v distrobox &>/dev/null; then
-  alias distrobox='/usr/bin/distrobox-host-exec distrobox'
+if whence -p cmatrix &>/dev/null; then
+	alias cmatrix='cmatrix -b'
 fi
 
 # git
 alias g='git'
+
+# containers
+if ! whence -p docker &>/dev/null && whence -p podman &>/dev/null; then
+	alias docker='podman'
+fi
+if ! whence -p docker-compose &>/dev/null && whence -p podman-compose &>/dev/null; then
+	alias docker-compose='podman-compose'
+fi
+if [[ -n "${CONTAINER_ID:-}" ]] && ! whence -p distrobox &>/dev/null; then
+	alias distrobox='/usr/bin/distrobox-host-exec distrobox'
+fi
+
+# fpath
+if [[ -n "${CONTAINER_ID:-${container:-}}" ]] && [[ -d /run/host/usr/share/zsh/site-functions/ ]]; then
+	fpath=("${fpath[@]}" /run/host/usr/share/zsh/site-functions)
+fi
 
 # <<< end <<<
 

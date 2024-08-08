@@ -7,3 +7,9 @@ indent_size = 2
 end_of_line = lf
 trim_trailing_whitespace = true
 insert_final_newline = true
+
+[{*.sh,*.zsh,.zshenv,.zprofile,.zlogin,.zshrc,.zlogout,.zpreztorc,direnvrc}]
+indent_style = tab
+
+[lib/modules/*/functions/_*]
+indent_style = tab

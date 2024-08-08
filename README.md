@@ -15,10 +15,10 @@ git clone https://github.com/lucasng-dev/zsh-config.git ~/.zsh
 Run the installer:
 
 ```shell
-zsh ~/.zsh/install.zsh
+zsh ~/.zsh/install.sh
 ```
 
-The install process will update the `~/.zshenv` file, pointing to this project. Reopen the terminal and adjust the font preferences.
+The installation process will update the `~/.zshenv` file, pointing to this project. Reopen the terminal and adjust the font preferences.
 
 ## Update
 
@@ -28,7 +28,7 @@ Use the following command/alias:
 @zshup
 ```
 
-An alternative is to run manually a `git pull` on this project folder and re-run the `install.zsh` script.
+An alternative is to run manually a `git pull` on this project folder and re-run the `install.sh` script.
 
 ## Uninstall
 
@@ -42,11 +42,11 @@ Delete the following folders:
 - `~/.local/share/fonts/NerdFonts/FiraCode` _(patched font on Linux)_
 - `~/Library/Fonts/NerdFonts/FiraCode` _(patched font on macOS)_
 
-## Custom config files
+## Custom shell scripts
 
 These local user home files, if existent, will be loaded in the following order:
 
-| User config file     | Usage                                                   | Loaded on              |
+| User script file     | Usage                                                   | Loaded on              |
 | -------------------- | ------------------------------------------------------- | ---------------------- |
 | `~/.zshenv`          | Setup only, points to this project, keep it as is       | All executions         |
 | `~/.profile`         | Use **`~/.zprofile`** instead                           | All executions         |
@@ -56,9 +56,10 @@ These local user home files, if existent, will be loaded in the following order:
 | `~/.zlogin`          | Unusual, interactive shell, after open                  | Interactive shell only |
 | `~/.zlogout`         | Unusual, interactive shell, before exit                 | Interactive shell only |
 
-## Extra config files used by modules
+## Extra shell scripts used by modules
 
-| User config file | Usage                         | Loaded on       |
-| ---------------- | ----------------------------- | --------------- |
-| `~/.host`        | Script to provision host      | `@host upgrade` |
-| `~/.box`         | Script to provision distrobox | `@box upgrade`  |
+| User script file | Usage                                               | Loaded on       |
+| ---------------- | --------------------------------------------------- | --------------- |
+| `~/.host`        | Script to provision host                            | `@host upgrade` |
+| `~/.box`         | Script to provision distrobox                       | `@box upgrade`  |
+| `~/.box-DISTRO`  | Script to provision distrobox for a specific distro | `@box upgrade`  |

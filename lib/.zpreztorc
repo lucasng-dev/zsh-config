@@ -3,37 +3,39 @@ source "$ZDOTDIR/.zprezto/runcoms/zpreztorc"
 
 # >>> begin >>>
 
-# modules: https://github.com/sorin-ionescu/prezto/tree/master/modules#modules
+# modules: https://github.com/sorin-ionescu/prezto/tree/HEAD/modules#modules
 zstyle ':prezto:load' pmodule-dirs "$ZDOTDIR/modules"
 zstyle ':prezto:load' pmodule \
-  '_tmux-ssh' \
-  'environment' \
-  'terminal' \
-  'editor' \
-  'directory' \
-  'archive' \
-  'git' \
-  'spectrum' \
-  'utility' \
-  'completion' \
-  'history-substring-search' \
-  '_linux' \
-  '_upgrade' \
-  '_tab-complete' \
-  '_starship' \
-  '_direnv'
+	'environment' \
+	'_tmux-ssh' \
+	'terminal' \
+	'editor' \
+	'directory' \
+	'git' \
+	'archive' \
+	'_linux' \
+	'_upgrade' \
+	'_packages' \
+	'_tab-complete' \
+	'_micro' \
+	'_finder' \
+	'_clipboard' \
+	'_direnv' \
+	'_mise' \
+	'_starship' \
+	'completion' \
+	'syntax-highlighting' \
+	'history-substring-search' \
+	'autosuggestions'
 
-# editor: https://github.com/sorin-ionescu/prezto/tree/master/modules/editor#editor
+# terminal: https://github.com/sorin-ionescu/prezto/tree/HEAD/modules/terminal#terminal
+zstyle ':prezto:module:terminal' auto-title 'yes'
+
+# editor: https://github.com/sorin-ionescu/prezto/tree/HEAD/modules/editor#editor
 zstyle ':prezto:module:editor' dot-expansion 'yes'
 
 # git: https://github.com/sorin-ionescu/prezto/tree/master/modules/git#git
 zstyle ':prezto:module:git:alias' skip 'yes'
-
-# terminal: https://github.com/sorin-ionescu/prezto/tree/master/modules/terminal#terminal
-zstyle ':prezto:module:terminal' auto-title 'yes'
-
-# utility: https://github.com/sorin-ionescu/prezto/tree/master/modules/utility#utility
-zstyle ':prezto:module:utility' correct 'no'
 
 # <<< end <<<
 

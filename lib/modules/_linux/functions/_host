@@ -1,0 +1,30 @@
+#compdef @host
+compdef _host @host
+
+function _host() {
+	local -a _action
+
+	_action=(
+		{exec,run}':Execute a command on the host'
+		{enter,shell}':Enter the host shell'
+		logs':Show host logs'
+		{upgrade,update}':Upgrade the host system using ~/.host provisioning script'
+	)
+
+	_arguments '1: :->base_cmd' '*:: :->args'
+
+	# shellcheck disable=SC2154
+	case "$state" in
+	base_cmd) _describe 'action' _action ;;
+	args)
+		case "${words[1]}" in
+		exec | run) _precommand ;;
+		esac
+		;;
+	esac
+}
+
+# shellcheck disable=SC2154
+if [[ "${funcstack[1]}" == '_host' ]]; then
+	_host
+fi
