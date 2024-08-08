@@ -1,0 +1,12 @@
+{
+  "backup": false,
+  "indentchar": "»",
+  "mouse": true,
+  "ruler": true,
+  "savecursor": false,
+  "savehistory": false,
+  "saveundo": false,
+  "softwrap": true,
+  "tabsize": 4,
+  "wordwrap": true
+}

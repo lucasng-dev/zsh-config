@@ -3,6 +3,9 @@
 [aws]
 symbol = "  "
 
+[battery]
+disabled = true
+
 [buf]
 symbol = " "
 
@@ -15,6 +18,9 @@ symbol = " "
 [container]
 format = '[$symbol]($style) '
 
+[crystal]
+symbol = " "
+
 [dart]
 symbol = " "
 
@@ -26,10 +32,13 @@ truncation_length = 0
 symbol = " "
 
 [elixir]
-symbol = " "
+symbol = " "
 
 [elm]
 symbol = " "
+
+[fennel]
+symbol = " "
 
 [fossil_branch]
 symbol = " "
@@ -61,6 +70,9 @@ symbol = " "
 [julia]
 symbol = " "
 
+[kotlin]
+symbol = " "
+
 [lua]
 symbol = " "
 
@@ -79,12 +91,16 @@ symbol = " "
 [nodejs]
 symbol = " "
 
+[ocaml]
+symbol = " "
+
 [os]
 disabled = false
 
 [os.symbols]
 Alpaquita = " "
 Alpine = " "
+AlmaLinux = " "
 Amazon = " "
 Android = " "
 Arch = " "
@@ -100,6 +116,7 @@ Garuda = "󰛓 "
 Gentoo = " "
 HardenedBSD = "󰞌 "
 Illumos = "󰈸 "
+Kali = " "
 Linux = " "
 Mabox = " "
 Macos = " "
@@ -116,17 +133,25 @@ Pop = " "
 Raspbian = " "
 Redhat = " "
 RedHatEnterprise = " "
+RockyLinux = " "
 Redox = "󰀘 "
 Solus = "󰠳 "
 SUSE = " "
 Ubuntu = " "
 Unknown = " "
+Void = " "
 Windows = "󰍲 "
 
 [package]
 symbol = "󰏗 "
 display_private = true
 disabled = false
+
+[perl]
+symbol = " "
+
+[php]
+symbol = " "
 
 [pijul_channel]
 symbol = " "
@@ -141,10 +166,16 @@ symbol = "󰟔 "
 symbol = " "
 
 [rust]
-symbol = " "
+symbol = "󱘗 "
 
 [scala]
 symbol = " "
 
 [status]
 disabled = false
+
+[swift]
+symbol = " "
+
+[zig]
+symbol = " "

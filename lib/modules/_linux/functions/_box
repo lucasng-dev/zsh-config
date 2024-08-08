@@ -1,0 +1,62 @@
+#compdef @box
+compdef _box @box
+
+function _box() {
+	local -a _action _distro _distro_all
+
+	_action=(
+		list':List all distrobox containers'
+		exists':Check if a distrobox container exists'
+		create':Create a distrobox container'
+		{exec,run}':Execute a command inside a distrobox container'
+		{enter,shell}':Enter a distrobox container shell'
+		stats':Show distrobox container resource usage statistics'
+		logs':Show distrobox container logs'
+		stop':Stop a distrobox container'
+		{rm,delete}':Remove a distrobox container'
+		{upgrade,update}':Upgrade a distrobox container using ~/.box and ~/.box-DISTRO provisioning scripts'
+	)
+
+	_distro=(
+		alma':Run action for AlmaLinux distrobox container'
+		alpine':Run action for Alpine Linux distrobox container'
+		amazon':Run action for Amazon Linux distrobox container'
+		arch':Run action for Arch Linux distrobox container'
+		centos':Run action for CentOS Stream distrobox container'
+		debian':Run action for Debian (sid) distrobox container'
+		fedora':Run action for Fedora distrobox container'
+		opensuse':Run action for openSUSE distrobox container'
+		rhel':Run action for Red Hat Enterprise Linux distrobox container'
+		rocky':Run action for Rocky Linux distrobox container'
+		ubuntu':Run action for Ubuntu distrobox container'
+	)
+
+	_distro_all=(
+		--all':Run action for all available distrobox containers'
+		"${_distro[@]}"
+	)
+
+	_arguments '1: :->base_cmd' '2: :->distro_cmd' '*:: :->args'
+
+	# shellcheck disable=SC2154
+	case "$state" in
+	base_cmd) _describe 'action' _action ;;
+	distro_cmd)
+		case "${words[2]}" in
+		list) ;;
+		stop | rm | delete | upgrade | update) _describe 'distro' _distro_all ;;
+		*) _describe 'distro' _distro ;;
+		esac
+		;;
+	args)
+		case "${words[1]}" in
+		exec | run) shift words && ((CURRENT--)) && _precommand ;;
+		esac
+		;;
+	esac
+}
+
+# shellcheck disable=SC2154
+if [[ "${funcstack[1]}" == '_box' ]]; then
+	_box
+fi

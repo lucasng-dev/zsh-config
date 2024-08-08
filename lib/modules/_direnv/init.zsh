@@ -1,3 +1,3 @@
-if command -v direnv &>/dev/null; then
-  eval "$(direnv hook zsh)"
+if whence -p direnv &>/dev/null; then
+	eval "$(command direnv hook zsh)"
 fi
