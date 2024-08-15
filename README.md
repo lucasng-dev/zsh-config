@@ -44,22 +44,21 @@ Delete the following folders:
 
 ## Custom shell scripts
 
-These local user home files, if existent, will be loaded in the following order:
+Located at [`custom`](custom) directory, these local scripts, if existent, will be loaded in the following order:
 
-| User script file     | Usage                                                   | Loaded on              |
-| -------------------- | ------------------------------------------------------- | ---------------------- |
-| `~/.zshenv`          | Setup only, points to this project, keep it as is       | All executions         |
-| `~/.profile`         | Use **`~/.zprofile`** instead                           | All executions         |
-| **`~/.zprofile`** ✅ | **Recommended**, e.g: environment variables and options | All executions         |
-| **`~/.zshrc`** ✅    | **Recommended**, e.g: aliases, functions                | Interactive shell only |
-| `~/.zprestorc`       | If necessary, allows changes on Prezto config           | Interactive shell only |
-| `~/.zlogin`          | Unusual, interactive shell, after open                  | Interactive shell only |
-| `~/.zlogout`         | Unusual, interactive shell, before exit                 | Interactive shell only |
+| User script file   | Usage                                                   | Loaded on              |
+| ------------------ | ------------------------------------------------------- | ---------------------- |
+| `.zshenv`          | Setup only, points to this project, keep it as is       | All executions         |
+| **`.zprofile`** ✅ | **Recommended**, e.g: environment variables and options | All executions         |
+| **`.zshrc`** ✅    | **Recommended**, e.g: aliases, functions                | Interactive shell only |
+| `.zprestorc`       | If necessary, allows changes on Prezto config           | Interactive shell only |
+| `.zlogin`          | Unusual, interactive shell, after open                  | Interactive shell only |
+| `.zlogout`         | Unusual, interactive shell, before exit                 | Interactive shell only |
 
-## Extra shell scripts used by modules
+### Extra shell scripts used by modules
 
 | User script file | Usage                                               | Loaded on       |
 | ---------------- | --------------------------------------------------- | --------------- |
-| `~/.host`        | Script to provision host                            | `@host upgrade` |
-| `~/.box`         | Script to provision distrobox                       | `@box upgrade`  |
-| `~/.box-DISTRO`  | Script to provision distrobox for a specific distro | `@box upgrade`  |
+| `.host`          | Script to provision host                            | `@host upgrade` |
+| `.box`           | Script to provision distrobox                       | `@box upgrade`  |
+| `.box-DISTRO`    | Script to provision distrobox for a specific distro | `@box upgrade`  |

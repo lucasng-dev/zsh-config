@@ -169,4 +169,5 @@ fi
 
 # <<< end <<<
 
-if [[ -s ~/.zshrc ]]; then source ~/.zshrc; fi
+# shellcheck disable=SC1091
+if [[ -s "$ZDOTDIR/../custom/.zshrc" ]]; then source "$ZDOTDIR/../custom/.zshrc"; fi

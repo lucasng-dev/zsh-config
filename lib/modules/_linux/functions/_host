@@ -8,7 +8,7 @@ function _host() {
 		{exec,run}':Execute a command on the host'
 		{enter,shell}':Enter the host shell'
 		logs':Show host logs'
-		{upgrade,update}':Upgrade the host system using ~/.host provisioning script'
+		{upgrade,update}':Upgrade the host system using "custom/.host" provisioning script'
 	)
 
 	_arguments '1: :->base_cmd' '*:: :->args'

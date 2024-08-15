@@ -39,4 +39,5 @@ zstyle ':prezto:module:git:alias' skip 'yes'
 
 # <<< end <<<
 
-if [[ -s ~/.zpreztorc ]]; then source ~/.zpreztorc; fi
+# shellcheck disable=SC1091
+if [[ -s "$ZDOTDIR/../custom/.zpreztorc" ]]; then source "$ZDOTDIR/custom/../.zpreztorc"; fi
