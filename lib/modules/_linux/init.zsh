@@ -181,9 +181,10 @@ function __host_upgrade() {
 	fi
 	echo && echo '### HOST UPGRADE ###' && echo
 	__linux_upgrade
-	if [[ -s ~/.host ]]; then
+	# shellcheck disable=SC2154
+	if [[ -s "$ZDOTDIR/../custom/.host" ]]; then
 		echo '*** PROVISIONING SCRIPT ***'
-		command zsh -eu -o pipefail ~/.host
+		command zsh -eu -o pipefail "$ZDOTDIR/../custom/.host"
 		echo '>>> OK <<<' && echo
 	fi
 	__linux_cleanup
@@ -197,14 +198,15 @@ function __box_upgrade() {
 	echo && echo "### BOX UPGRADE: ${distro_name:u} ###" && echo
 	__box_configure
 	__linux_upgrade
-	if [[ -s ~/.box ]]; then
+	# shellcheck disable=SC2154
+	if [[ -s "$ZDOTDIR/../custom/.box" ]]; then
 		echo '*** PROVISIONING SCRIPT ***'
-		command zsh -eu -o pipefail ~/.box # all distros
+		command zsh -eu -o pipefail "$ZDOTDIR/../custom/.box" # all distros
 		echo '>>> OK <<<' && echo
 	fi
-	if [[ -s ~/.box-"${distro_name}" ]]; then
+	if [[ -s "$ZDOTDIR/../custom/.box-${distro_name}" ]]; then
 		echo "*** PROVISIONING SCRIPT: ${distro_name:u} ***"
-		command zsh -eu -o pipefail ~/.box-"${distro_name}" # distro specific
+		command zsh -eu -o pipefail "$ZDOTDIR/../custom/.box-${distro_name}" # distro specific
 		echo '>>> OK <<<' && echo
 	fi
 	__linux_cleanup
@@ -355,7 +357,7 @@ function __box_configure() {
 			command git clone https://aur.archlinux.org/yay-bin.git "$builddir/yay-bin"
 			local mflags=(--noconfirm --needed --clean --cleanbuild)
 			(cd "$builddir/yay-bin" && PATH='/usr/bin:/usr/sbin:/bin:/sbin' command makepkg -si "${mflags[@]}")
-			command rm -f ~/.config/yay/config.json
+			command rm -f "${XDG_CONFIG_HOME:-$HOME/.config}/yay/config.json"
 			command yay -Y --save --mflags "${mflags[*]}"
 		fi
 		command yay -Y --save --needed --devel --builddir "$builddir" --batchinstall --combinedupgrade --cleanafter --removemake \

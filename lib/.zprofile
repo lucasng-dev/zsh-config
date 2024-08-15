@@ -119,5 +119,5 @@ fi
 
 # <<< end <<<
 
-if [[ -s ~/.profile ]]; then emulate sh -c '. ~/.profile'; fi
-if [[ -s ~/.zprofile ]]; then source ~/.zprofile; fi
+# shellcheck disable=SC1091
+if [[ -s "$ZDOTDIR/../custom/.zprofile" ]]; then source "$ZDOTDIR/../custom/.zprofile"; fi

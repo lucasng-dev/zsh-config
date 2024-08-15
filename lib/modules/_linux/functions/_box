@@ -14,7 +14,7 @@ function _box() {
 		logs':Show distrobox container logs'
 		stop':Stop a distrobox container'
 		{rm,delete}':Remove a distrobox container'
-		{upgrade,update}':Upgrade a distrobox container using ~/.box and ~/.box-DISTRO provisioning scripts'
+		{upgrade,update}':Upgrade a distrobox container using "custom/.box" and "custom/.box-DISTRO" provisioning scripts'
 	)
 
 	_distro=(
