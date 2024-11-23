@@ -214,7 +214,7 @@ function __box_upgrade() {
 
 function __linux_upgrade() {
 	if [[ -z "${CONTAINER_ID:-${container:-}}" ]] && whence -p rpm-ostree &>/dev/null; then
-		echo '*** UPGRADE: RPM-OSTREE ***' && sudo rpm-ostree refresh-md --force && sudo rpm-ostree upgrade --cache-only && echo '>>> OK <<<' && echo
+		echo '*** UPGRADE: RPM-OSTREE ***' && sudo rpm-ostree upgrade && echo '>>> OK <<<' && echo
 	elif whence -p dnf &>/dev/null; then
 		echo '*** UPGRADE: DNF ***' && sudo dnf upgrade --refresh -y && echo '>>> OK <<<' && echo
 	elif whence -p yum &>/dev/null; then
@@ -341,7 +341,7 @@ function __box_configure() {
 	echo '*** REDIRECT HOST COMMANDS ***'
 	/usr/bin/distrobox-host-exec --yes true # download host-spawn
 	local host_cmd
-	for host_cmd in virsh docker{,-compose} podman{,-compose} minikube flatpak snap xdg-open gtk-launch gnome-terminal tilix; do
+	for host_cmd in virsh docker{,-compose} podman{,-compose} minikube flatpak snap xdg-open gtk-launch gnome-terminal kgx ptyxis tilix konsole; do
 		if __host_exec zsh -c "whence -p '$host_cmd'" &>/dev/null; then
 			echo "command: $host_cmd"
 			sudo ln -sfT /usr/bin/distrobox-host-exec "/usr/local/bin/$host_cmd"
