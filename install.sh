@@ -31,29 +31,33 @@ echo "Date: $(git -C "$ZPREZTODIR" --no-pager log -1 --format='%cd')"
 echo '>>> OK <<<' && echo
 
 echo '*** STARSHIP INSTALL ***'
-STARSHIPDIR="$ZDOTDIR/.starship"
-mkdir -p "$STARSHIPDIR"
-wget --no-hsts --no-verbose -O - 'https://raw.githubusercontent.com/starship/starship/HEAD/install/install.sh' | sh -s -- --bin-dir "$STARSHIPDIR" -y >/dev/null
-"$STARSHIPDIR/starship" --version
-echo '>>> OK <<<' && echo
+if ! whence -p starship &>/dev/null; then
+	STARSHIPDIR="$ZDOTDIR/.starship"
+	mkdir -p "$STARSHIPDIR"
+	wget --no-hsts --no-verbose -O - 'https://raw.githubusercontent.com/starship/starship/HEAD/install/install.sh' | sh -s -- --bin-dir "$STARSHIPDIR" -y >/dev/null
+	"$STARSHIPDIR/starship" --version
+	echo '>>> OK <<<' && echo
+fi
 
 echo '*** FONT INSTALL ***'
-font_file='FiraCode.zip'
-font_download_dir="$ZDOTDIR/.cache/fonts-download"
-mkdir -p "$font_download_dir"
-wget --no-hsts --no-verbose -N -P "$font_download_dir" \
-	"https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font_file"
-if [[ "${OSTYPE:-}" == darwin* ]]; then
-	font_user_dir="$HOME/Library/Fonts/NerdFonts" # macOS
-else
-	font_user_dir="${XDG_DATA_HOME:-$HOME/.local/share}/fonts/NerdFonts" # Linux
+if ! fc-list 2>/dev/null | grep -v "$HOME" | grep -qi 'fira.*code.*nerd' &>/dev/null; then
+	font_file='FiraCode.zip'
+	font_download_dir="$ZDOTDIR/.cache/fonts-download"
+	mkdir -p "$font_download_dir"
+	wget --no-hsts --no-verbose -N -P "$font_download_dir" \
+		"https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font_file"
+	if [[ "${OSTYPE:-}" == darwin* ]]; then
+		font_user_dir="$HOME/Library/Fonts/NerdFonts" # macOS
+	else
+		font_user_dir="${XDG_DATA_HOME:-$HOME/.local/share}/fonts/NerdFonts" # Linux
+	fi
+	mkdir -p "$font_user_dir"
+	font_subdir="$font_user_dir/$(basename "$font_file" '.zip')"
+	rm -rf "$font_subdir"
+	unzip -q -o -d "$font_subdir" "$font_download_dir/$font_file"
+	echo "$font_subdir"
+	echo '>>> OK <<<' && echo
 fi
-mkdir -p "$font_user_dir"
-font_subdir="$font_user_dir/$(basename "$font_file" '.zip')"
-rm -rf "$font_subdir"
-unzip -q -o -d "$font_subdir" "$font_download_dir/$font_file"
-echo "$font_subdir"
-echo '>>> OK <<<' && echo
 
 echo '*** ZSH CONFIG ENABLE ***'
 zshenv_src="$(sed -E '\|ZDOTDIR=|d' ~/.zshenv 2>/dev/null || true)"
