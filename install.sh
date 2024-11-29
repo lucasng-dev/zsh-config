@@ -30,8 +30,8 @@ echo "Commit: $(git -C "$ZPREZTODIR" rev-parse --short HEAD)"
 echo "Date: $(git -C "$ZPREZTODIR" --no-pager log -1 --format='%cd')"
 echo '>>> OK <<<' && echo
 
-echo '*** STARSHIP INSTALL ***'
 if ! whence -p starship &>/dev/null; then
+	echo '*** STARSHIP INSTALL ***'
 	STARSHIPDIR="$ZDOTDIR/.starship"
 	mkdir -p "$STARSHIPDIR"
 	wget --no-hsts --no-verbose -O - 'https://raw.githubusercontent.com/starship/starship/HEAD/install/install.sh' | sh -s -- --bin-dir "$STARSHIPDIR" -y >/dev/null
@@ -39,8 +39,8 @@ if ! whence -p starship &>/dev/null; then
 	echo '>>> OK <<<' && echo
 fi
 
-echo '*** FONT INSTALL ***'
 if ! fc-list 2>/dev/null | grep -v "$HOME" | grep -qi 'fira.*code.*nerd' &>/dev/null; then
+	echo '*** FONT INSTALL ***'
 	font_file='FiraCode.zip'
 	font_download_dir="$ZDOTDIR/.cache/fonts-download"
 	mkdir -p "$font_download_dir"
