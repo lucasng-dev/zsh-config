@@ -336,6 +336,7 @@ function __box_configure() {
 	# https://github.com/89luca89/distrobox/issues/358
 	echo '*** FONT CACHE ***'
 	sudo sed -Ei "s|(<cachedir\s[^>]*prefix=\"xdg\"[^>]*>)[^<]*(</cachedir>)|\1distrobox/distrobox-${distro_name}/fontconfig\2|g" /etc/fonts/fonts.conf
+	fc-cache -f
 	echo '>>> OK <<<' && echo
 
 	echo '*** REDIRECT HOST COMMANDS ***'
