@@ -39,7 +39,7 @@ if ! whence -p starship &>/dev/null; then
 	echo '>>> OK <<<' && echo
 fi
 
-if ! fc-list 2>/dev/null | grep -v "$HOME" | grep -qi 'fira.*code.*nerd' &>/dev/null; then
+if ! fc-list 2>/dev/null | grep -v "$HOME" | grep -i 'fira.*code.*nerd' &>/dev/null; then
 	echo '*** FONT INSTALL ***'
 	font_file='FiraCode.zip'
 	font_download_dir="$ZDOTDIR/.cache/fonts-download"
