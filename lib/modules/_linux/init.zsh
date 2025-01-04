@@ -304,7 +304,6 @@ function __box_configure() {
 			/etc/pacman.conf
 		sudo sed -Ei \
 			-e 's/^(OPTIONS=.*\s)(debug)(\b.*)$/\1!\2\3/g' \
-			-e "\/^PKGEXT=/c\PKGEXT='.pkg.tar'" \
 			/etc/makepkg.conf
 		if [[ ! -d /etc/pacman.d/gnupg/ ]]; then
 			# https://gitlab.archlinux.org/archlinux/archlinux-docker
