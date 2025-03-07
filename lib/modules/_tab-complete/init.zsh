@@ -1,3 +1,5 @@
+[[ -n "${ZDOTDIR:-}" ]] || return 1
+
 function __tab_complete() {
 	# https://unix.stackexchange.com/a/32426
 	if [[ "$BUFFER" =~ ^\\s*$ ]]; then

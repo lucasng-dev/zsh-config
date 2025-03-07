@@ -1,5 +1,4 @@
-# shellcheck disable=SC2139,SC2154
-if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
+[[ -n "${ZDOTDIR:-}" ]] || return 1
 source "$ZDOTDIR/.zprezto/runcoms/zshrc"
 
 # >>> begin >>>
@@ -35,11 +34,11 @@ else
 fi
 
 # editor / visual
-alias edit="$EDITOR"
-alias e="$EDITOR"
+alias edit="${EDITOR:-}"
+alias e="${EDITOR:-}"
 alias _edit='sudoedit'
 alias _e='sudoedit'
-alias v="$VISUAL"
+alias v="${VISUAL:-}"
 alias _v='sudoedit'
 if whence -p nvim &>/dev/null; then
 	alias vim='nvim'
@@ -169,5 +168,4 @@ fi
 
 # <<< end <<<
 
-# shellcheck disable=SC1091
-if [[ -s "$ZDOTDIR/../custom/.zshrc" ]]; then source "$ZDOTDIR/../custom/.zshrc"; fi
+[[ ! -s "$ZDOTDIR/../custom/.zshrc" ]] || source "$ZDOTDIR/../custom/.zshrc"

@@ -1,4 +1,4 @@
-# shellcheck disable=SC2262
+[[ -n "${ZDOTDIR:-}" ]] || return 1
 
 if whence -p rpm-ostree &>/dev/null; then
 	@rpm-ostree() { if [[ $# -eq 0 ]]; then command rpm-ostree status --json 2>/dev/null | command jq -r '.deployments[0].packages[]' | command sort -u | command less; else command rpm-ostree search "$@" | command less; fi; }
@@ -23,7 +23,7 @@ fi
 if whence -p pacman &>/dev/null; then
 	function @pacman() {
 		if [[ $# -eq 0 ]]; then
-			comm -23 <(pacman -Qqett | sort -u) <(command pacman -Qqg gnome | command sort -u) | command less
+			command comm -23 <(command pacman -Qqett | command sort -u) <(command pacman -Qqg gnome | command sort -u) | command less
 		else
 			if whence -p yay &>/dev/null; then
 				command yay -Ss "$@" | command less

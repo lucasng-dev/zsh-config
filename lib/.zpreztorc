@@ -1,4 +1,4 @@
-if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
+[[ -n "${ZDOTDIR:-}" ]] || return 1
 source "$ZDOTDIR/.zprezto/runcoms/zpreztorc"
 
 # >>> begin >>>
@@ -39,5 +39,4 @@ zstyle ':prezto:module:git:alias' skip 'yes'
 
 # <<< end <<<
 
-# shellcheck disable=SC1091
-if [[ -s "$ZDOTDIR/../custom/.zpreztorc" ]]; then source "$ZDOTDIR/../custom/.zpreztorc"; fi
+[[ ! -s "$ZDOTDIR/../custom/.zpreztorc" ]] || source "$ZDOTDIR/../custom/.zpreztorc"
