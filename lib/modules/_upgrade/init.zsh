@@ -11,6 +11,8 @@ function @upgrade() {
 		set -eu -o pipefail
 		@zshup
 		@host --upgrade
-		@box --upgrade
+		if @box --exists &>/dev/null; then
+			@box --upgrade
+		fi
 	)
 }
