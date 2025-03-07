@@ -1,6 +1,7 @@
+[[ -n "${ZDOTDIR:-}" ]] || return 1
+
 if whence -p micro &>/dev/null; then
 	function micro() {
-		# shellcheck disable=SC2154
 		local src_dir="$ZDOTDIR/config/micro"
 		local dst_dir="${XDG_CONFIG_HOME:-$HOME/.config}/micro"
 		local config_file

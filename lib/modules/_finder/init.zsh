@@ -1,3 +1,5 @@
+[[ -n "${ZDOTDIR:-}" ]] || return 1
+
 if whence -p fd &>/dev/null; then
 	function fdname() {
 		command fd --color always --follow --hidden --exclude .git "$@" | command less

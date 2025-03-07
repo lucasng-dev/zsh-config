@@ -1,5 +1,5 @@
-if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
-#source "$ZDOTDIR/.zprezto/runcoms/zprofile"
+[[ -n "${ZDOTDIR:-}" ]] || return 1
+# source "$ZDOTDIR/.zprezto/runcoms/zprofile"
 
 # >>> begin >>>
 
@@ -56,11 +56,14 @@ fi
 unset __lesspipe_cmd
 export PAGER='less'
 export MANPAGER='less'
+export SYSTEMD_PAGER='less'
+export SYSTEMD_LESS="$LESS"
 export GIT_PAGER='less'
 for __bat_cmd in batcat bat; do
 	if whence -p "$__bat_cmd" &>/dev/null; then
 		export PAGER="$__bat_cmd"
 		export MANPAGER="$__bat_cmd -l man -p"
+		export SYSTEMD_PAGER="$__bat_cmd -l log -p"
 		export GIT_PAGER="$__bat_cmd -p"
 		export BAT_PAGER="less -L $LESS"
 		export BAT_STYLE='header-filename,header-filesize,rule,numbers,snip'
@@ -119,5 +122,4 @@ fi
 
 # <<< end <<<
 
-# shellcheck disable=SC1091
-if [[ -s "$ZDOTDIR/../custom/.zprofile" ]]; then source "$ZDOTDIR/../custom/.zprofile"; fi
+[[ ! -s "$ZDOTDIR/../custom/.zprofile" ]] || source "$ZDOTDIR/../custom/.zprofile"

@@ -1,3 +1,5 @@
+[[ -n "${ZDOTDIR:-}" ]] || return 1
+
 if whence -p mise &>/dev/null; then
 	eval "$(command mise activate zsh)"
 	alias rtx='mise'

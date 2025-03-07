@@ -1,6 +1,8 @@
+[[ -n "${ZDOTDIR:-}" ]] || return 1
+
 if whence -p tmux &>/dev/null; then
 	if [[ -n "${CONTAINER_ID:-}" ]]; then
-		export TMUX_TMPDIR="${XDG_CACHE_HOME:-$HOME/.cache}/distrobox/$CONTAINER_ID/tmux"
+		export TMUX_TMPDIR="${XDG_CACHE_HOME:-$HOME/.cache}/$CONTAINER_ID/tmux"
 		command mkdir -p "$TMUX_TMPDIR"
 	fi
 	if [[ -o interactive ]] && [[ -n "${SSH_TTY:-}" ]] && [[ -z "${TMUX:-}" ]]; then

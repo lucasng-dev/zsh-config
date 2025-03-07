@@ -1,3 +1,5 @@
+[[ -n "${ZDOTDIR:-}" ]] || return 1
+
 # https://github.com/zyedidia/clipboard
 if [[ -n "${WAYLAND_DISPLAY:-}" ]] && whence -p wl-copy &>/dev/null && whence -p wl-paste &>/dev/null; then
 	alias @copy='wl-copy &>/dev/null'

@@ -1,5 +1,3 @@
-if [[ -z "${ZDOTDIR:-}" ]]; then return 1; fi
+[[ -n "${ZDOTDIR:-}" ]] || return 1
 source "$ZDOTDIR/.zprezto/runcoms/zlogin"
-
-# shellcheck disable=SC1091
-if [[ -s "$ZDOTDIR/../custom/.zlogin" ]]; then source "$ZDOTDIR/../custom/.zlogin"; fi
+[[ ! -s "$ZDOTDIR/../custom/.zlogin" ]] || source "$ZDOTDIR/../custom/.zlogin"

@@ -1,5 +1,4 @@
 shell=bash
-enable=check-unassigned-uppercase
-enable=quote-safe-variables
-external-sources=true
-disable=SC1090,SC1094
+enable=check-unassigned-uppercase,quote-safe-variables
+disable=SC1090,SC1091,SC1094,SC2139
+disable=SC2051,SC2207 # zsh specific
