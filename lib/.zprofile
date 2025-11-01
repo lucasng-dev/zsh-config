@@ -96,6 +96,11 @@ if [[ -z "${BROWSER:-}" ]]; then
 	fi
 fi
 
+# git
+if [[ -n "${SSH_CLIENT:-}" ]] && [[ -n "${SSH_AUTH_SOCK:-}" ]]; then
+	export GIT_SSH_COMMAND="ssh -o IdentityAgent=$SSH_AUTH_SOCK"
+fi
+
 # containers
 export PODMAN_USERNS='keep-id'
 if ! whence -p docker &>/dev/null && whence -p podman &>/dev/null && [[ -z "${DOCKER_HOST:-}" ]] && [[ -n "${XDG_RUNTIME_DIR:-}" ]]; then
