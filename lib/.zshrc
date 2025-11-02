@@ -85,7 +85,7 @@ function printenv() {
 
 # network
 if [[ -n "${SSH_CLIENT:-}" ]] && [[ -n "${SSH_AUTH_SOCK:-}" ]]; then
-	alias ssh="ssh -t -o IdentityAgent=$SSH_AUTH_SOCK"
+	alias ssh="ssh -t -o IdentityAgent='$SSH_AUTH_SOCK'"
 else
 	alias ssh='ssh -t'
 fi

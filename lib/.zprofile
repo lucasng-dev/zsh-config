@@ -98,7 +98,7 @@ fi
 
 # git
 if [[ -n "${SSH_CLIENT:-}" ]] && [[ -n "${SSH_AUTH_SOCK:-}" ]]; then
-	export GIT_SSH_COMMAND="ssh -o IdentityAgent=$SSH_AUTH_SOCK"
+	export GIT_SSH_COMMAND="ssh -o IdentityAgent='$SSH_AUTH_SOCK'"
 fi
 
 # containers
