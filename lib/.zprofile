@@ -3,6 +3,11 @@
 
 # >>> begin >>>
 
+# shell
+if [[ "${SHELL:-}" != */zsh ]]; then
+	SHELL="$(whence -p zsh 2>/dev/null || echo '/bin/zsh')" && export SHELL
+fi
+
 # history
 export HISTFILE='/dev/null'
 
