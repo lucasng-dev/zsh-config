@@ -79,7 +79,9 @@ function __box_create() {
 	__host_exec distrobox-create --yes --no-entry \
 		--name distrobox --hostname "$HOSTNAME" \
 		--pull --image "$image" \
-		--additional-packages "${pkgs[*]}" "$@" &&
+		--additional-packages "${pkgs[*]}" \
+		--additional-flags "--env LANG='$LANG' --env SHELL='/usr/bin/zsh'" \
+		"$@" &&
 		__box_upgrade &&
 		__box_enter
 }

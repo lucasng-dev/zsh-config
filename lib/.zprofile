@@ -3,17 +3,22 @@
 
 # >>> begin >>>
 
-# shell
-if [[ "${SHELL:-}" != */zsh ]]; then
-	SHELL="$(whence -p zsh 2>/dev/null || echo '/bin/zsh')" && export SHELL
-fi
-
 # history
 export HISTFILE='/dev/null'
 
 # zsh options
 # shellcheck disable=SC2034
 typeset -gU path fpath manpath cdpath mailpath
+
+# shell
+if [[ "${SHELL:-}" != */zsh ]]; then
+	SHELL="$(whence -p zsh 2>/dev/null || echo '/bin/zsh')" && export SHELL
+fi
+
+# lang
+if [[ -z "${LANG:-}" ]] || [[ "${LANG:-}" == C.* ]] || [[ "${LANG:-}" != *.UTF-8 ]]; then
+	export LANG='en_US.UTF-8'
+fi
 
 # dev tools
 export CARGO_HOME="$HOME/.cargo"
@@ -101,11 +106,6 @@ if [[ -z "${BROWSER:-}" ]]; then
 	fi
 fi
 
-# git
-if [[ -n "${SSH_CLIENT:-}" ]] && [[ -n "${SSH_AUTH_SOCK:-}" ]]; then
-	export GIT_SSH_COMMAND="ssh -o IdentityAgent='$SSH_AUTH_SOCK'"
-fi
-
 # containers
 export PODMAN_USERNS='keep-id'
 if ! whence -p docker &>/dev/null && whence -p podman &>/dev/null && [[ -z "${DOCKER_HOST:-}" ]] && [[ -n "${XDG_RUNTIME_DIR:-}" ]]; then
@@ -115,11 +115,6 @@ fi
 # hostname
 if [[ -z "${HOSTNAME:-}" ]]; then
 	HOSTNAME="$(hostnamectl --transient 2>/dev/null || hostname 2>/dev/null || uname -n 2>/dev/null || true)" && export HOSTNAME
-fi
-
-# lang
-if [[ -z "${LANG:-}" ]]; then
-	export LANG='en_US.UTF-8'
 fi
 
 # user / group

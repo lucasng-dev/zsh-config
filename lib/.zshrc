@@ -84,11 +84,7 @@ function printenv() {
 }
 
 # network
-if [[ -n "${SSH_CLIENT:-}" ]] && [[ -n "${SSH_AUTH_SOCK:-}" ]]; then
-	alias ssh="ssh -t -o IdentityAgent='$SSH_AUTH_SOCK'"
-else
-	alias ssh='ssh -t'
-fi
+alias ssh='ssh -t'
 alias s='ssh'
 alias ping='ping -O'
 if whence -p mtr &>/dev/null; then
