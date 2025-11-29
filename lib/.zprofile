@@ -11,7 +11,7 @@ export HISTFILE='/dev/null'
 typeset -gU path fpath manpath cdpath mailpath
 
 # shell
-if [[ "${SHELL:-}" != */zsh ]]; then
+if [[ "${SHELL:-}" != */zsh ]] || [[ ! -x "${SHELL:-}" ]]; then
 	SHELL="$(whence -p zsh 2>/dev/null || echo '/bin/zsh')" && export SHELL
 fi
 
