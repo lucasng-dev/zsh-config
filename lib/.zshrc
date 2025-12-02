@@ -148,7 +148,18 @@ if whence -p cmatrix &>/dev/null; then
 fi
 
 # git
-alias g='git'
+if whence -p git &>/dev/null; then
+	if whence -p lazygit &>/dev/null; then
+		function git() {
+			if [[ $# -eq 0 ]] || { [[ $# -eq 1 ]] && [[ "$1" =~ ^(status|branch|log|stash)$ ]]; }; then
+				lazygit "$@"
+			else
+				command git "$@"
+			fi
+		}
+	fi
+	alias g='git'
+fi
 
 # containers
 if ! whence -p docker &>/dev/null && whence -p podman &>/dev/null; then
