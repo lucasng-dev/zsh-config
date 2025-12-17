@@ -1,7 +1,9 @@
 ### starship: https://starship.rs/presets/nerd-font.html#configuration ###
 
+"$schema" = 'https://starship.rs/config-schema.json'
+
 [aws]
-symbol = "  "
+symbol = " "
 
 [battery]
 disabled = true
@@ -9,8 +11,14 @@ disabled = true
 [buf]
 symbol = " "
 
+[bun]
+symbol = " "
+
 [c]
 symbol = " "
+
+[cpp]
+symbol = " "
 
 [cmake]
 symbol = " "
@@ -26,6 +34,9 @@ symbol = " "
 
 [dart]
 symbol = " "
+
+[deno]
+symbol = " "
 
 [directory]
 read_only = " 󰌾"
@@ -46,6 +57,9 @@ symbol = " "
 [fossil_branch]
 symbol = " "
 
+[gcloud]
+symbol = " "
+
 [git_branch]
 symbol = " "
 
@@ -54,6 +68,9 @@ tag_symbol = '  '
 
 [golang]
 symbol = " "
+
+[gradle]
+symbol = " "
 
 [guix_shell]
 symbol = " "
@@ -100,15 +117,13 @@ symbol = " "
 [ocaml]
 symbol = " "
 
-[os]
-disabled = false
-
 [os.symbols]
 Alpaquita = " "
 Alpine = " "
 AlmaLinux = " "
 Amazon = " "
 Android = " "
+AOSC = " "
 Arch = " "
 Artix = " "
 CachyOS = " "
@@ -164,6 +179,9 @@ symbol = " "
 [pijul_channel]
 symbol = " "
 
+[pixi]
+symbol = "󰏗 "
+
 [python]
 symbol = " "
 
@@ -180,6 +198,7 @@ symbol = "󱘗 "
 symbol = " "
 
 [status]
+symbol = " "
 disabled = false
 
 [swift]
@@ -187,6 +206,3 @@ symbol = " "
 
 [zig]
 symbol = " "
-
-[gradle]
-symbol = " "
