@@ -165,8 +165,18 @@ fi
 if ! whence -p docker &>/dev/null && whence -p podman &>/dev/null; then
 	alias docker='podman'
 fi
-if ! whence -p docker-compose &>/dev/null && whence -p podman-compose &>/dev/null; then
-	alias docker-compose='podman-compose'
+if whence -p docker-compose &>/dev/null; then
+	function docker-compose() {
+		UID="${UID:-}" GID="${GID:-}" TZ="${TZ:-}" command docker-compose "$@"
+	}
+fi
+if whence -p podman-compose &>/dev/null; then
+	function podman-compose() {
+		UID="${UID:-}" GID="${GID:-}" TZ="${TZ:-}" command podman-compose "$@"
+	}
+	if ! whence docker-compose &>/dev/null; then
+		alias docker-compose='podman-compose'
+	fi
 fi
 if [[ -n "${CONTAINER_ID:-}" ]] && ! whence -p distrobox &>/dev/null; then
 	alias distrobox='/usr/bin/distrobox-host-exec distrobox'
