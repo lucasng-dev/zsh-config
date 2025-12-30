@@ -167,12 +167,12 @@ if ! whence -p docker &>/dev/null && whence -p podman &>/dev/null; then
 fi
 if whence -p docker-compose &>/dev/null; then
 	function docker-compose() {
-		UID="${UID:-}" GID="${GID:-}" TZ="${TZ:-}" command docker-compose "$@"
+		UID="${UID:-}" GID="${GID:-}" TZ="${TZ:-$(timedatectl show --property=Timezone --value 2>/dev/null || echo 'UTC')}" command docker-compose "$@"
 	}
 fi
 if whence -p podman-compose &>/dev/null; then
 	function podman-compose() {
-		UID="${UID:-}" GID="${GID:-}" TZ="${TZ:-}" command podman-compose "$@"
+		UID="${UID:-}" GID="${GID:-}" TZ="${TZ:-$(timedatectl show --property=Timezone --value 2>/dev/null || echo 'UTC')}" command podman-compose "$@"
 	}
 	if ! whence docker-compose &>/dev/null; then
 		alias docker-compose='podman-compose'
