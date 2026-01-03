@@ -166,16 +166,18 @@ if ! whence -p docker &>/dev/null && whence -p podman &>/dev/null; then
 	alias docker='podman'
 fi
 if whence -p docker-compose &>/dev/null; then
-	function docker-compose() {
-		UID="${UID:-}" GID="${GID:-}" TZ="${TZ:-$(timedatectl show --property='Timezone' --value 2>/dev/null || echo 'UTC')}" command docker-compose "$@"
-	}
+	docker-compose() { UID="${UID:-}" GID="${GID:-}" TZ="${TZ:-$(timedatectl show --property='Timezone' --value 2>/dev/null || echo 'UTC')}" command docker-compose "$@"; }
+	if whence -p docker &>/dev/null; then
+		docker() { case "${1:-}" in compose) shift 1 && docker-compose "$@" ;; *) command docker "$@" ;; esac }
+	fi
 fi
 if whence -p podman-compose &>/dev/null; then
-	function podman-compose() {
-		UID="${UID:-}" GID="${GID:-}" TZ="${TZ:-$(timedatectl show --property='Timezone' --value 2>/dev/null || echo 'UTC')}" command podman-compose "$@"
-	}
+	podman-compose() { UID="${UID:-}" GID="${GID:-}" TZ="${TZ:-$(timedatectl show --property='Timezone' --value 2>/dev/null || echo 'UTC')}" command podman-compose "$@"; }
 	if ! whence docker-compose &>/dev/null; then
 		alias docker-compose='podman-compose'
+	fi
+	if whence -p podman &>/dev/null; then
+		podman() { case "${1:-}" in compose) shift 1 && podman-compose "$@" ;; *) command podman "$@" ;; esac }
 	fi
 fi
 if [[ -n "${CONTAINER_ID:-}" ]] && ! whence -p distrobox &>/dev/null; then
