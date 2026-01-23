@@ -106,12 +106,6 @@ if [[ -z "${BROWSER:-}" ]]; then
 	fi
 fi
 
-# containers
-export PODMAN_USERNS='keep-id'
-if ! whence -p docker &>/dev/null && whence -p podman &>/dev/null && [[ -z "${DOCKER_HOST:-}" ]] && [[ -n "${XDG_RUNTIME_DIR:-}" ]]; then
-	export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
-fi
-
 # hostname
 if [[ -z "${HOSTNAME:-}" ]]; then
 	HOSTNAME="$(hostnamectl --transient 2>/dev/null || hostname 2>/dev/null || uname -n 2>/dev/null || true)" && export HOSTNAME
