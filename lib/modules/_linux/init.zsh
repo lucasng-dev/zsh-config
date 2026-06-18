@@ -297,16 +297,16 @@ function __box_configure() {
 	echo '>>> OK <<<' && echo
 
 	echo '*** YAY ***'
-	local builddir="${XDG_CACHE_HOME:-$HOME/.cache}/yay" && command mkdir -p "$builddir"
+	local configdir="${XDG_CONFIG_HOME:-$HOME/.config}/yay"
+	local builddir="${XDG_CACHE_HOME:-$HOME/.cache}/yay"
+	local mflags=(--noconfirm --needed --clean --cleanbuild)
 	if ! whence -p yay &>/dev/null; then
-		command rm -rf "$builddir/yay-bin"
+		command rm -rf "$configdir" "$builddir" && command mkdir -p "$configdir" "$builddir"
 		command git clone https://aur.archlinux.org/yay-bin.git "$builddir/yay-bin"
-		local mflags=(--noconfirm --needed --clean --cleanbuild)
 		(cd "$builddir/yay-bin" && PATH='/usr/bin:/usr/sbin:/bin:/sbin' command makepkg -si "${mflags[@]}")
-		command rm -f "${XDG_CONFIG_HOME:-$HOME/.config}/yay/config.json"
-		command yay -Y --save --mflags "${mflags[*]}"
 	fi
 	command yay -Y --save --needed --devel --builddir "$builddir" --batchinstall --combinedupgrade --cleanafter --removemake \
-		--answerclean A --diffmenu --answerdiff A --editmenu --answeredit N
+		--answerclean A --diffmenu --answerdiff A --editmenu --answeredit N \
+		--mflags "${mflags[*]}"
 	echo '>>> OK <<<' && echo
 }
