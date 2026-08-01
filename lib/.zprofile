@@ -121,6 +121,9 @@ fi
 
 # fpath
 for __fpath_item in {/run/host,}/usr{,local}/share/zsh/{vendor-completions,site-functions}; do
+	if [[ -z "${CONTAINER_ID:-${container:-}}" ]] && [[ "$__fpath_item" == /run/host/* ]]; then
+		continue
+	fi
 	if [[ -d "$__fpath_item/" ]]; then
 		fpath=("$__fpath_item" "${fpath[@]}")
 	fi
