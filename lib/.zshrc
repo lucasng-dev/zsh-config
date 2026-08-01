@@ -166,11 +166,6 @@ if [[ -n "${CONTAINER_ID:-}" ]] && ! whence -p distrobox &>/dev/null; then
 	alias distrobox='/usr/bin/distrobox-host-exec distrobox'
 fi
 
-# fpath
-if [[ -n "${CONTAINER_ID:-${container:-}}" ]] && [[ -d /run/host/usr/share/zsh/site-functions/ ]]; then
-	fpath=("${fpath[@]}" /run/host/usr/share/zsh/site-functions)
-fi
-
 # <<< end <<<
 
 [[ ! -s "$ZDOTDIR/../custom/.zshrc" ]] || source "$ZDOTDIR/../custom/.zshrc"

@@ -119,6 +119,14 @@ if [[ -z "${GID:-}" ]]; then
 	GID="$(id -rg)" && export GID
 fi
 
+# fpath
+for __fpath_item in {/run/host,}/usr{,local}/share/zsh/{vendor-completions,site-functions}; do
+	if [[ -d "$__fpath_item/" ]]; then
+		fpath=("$__fpath_item" "${fpath[@]}")
+	fi
+done
+unset __fpath_item
+
 # <<< end <<<
 
 [[ ! -s "$ZDOTDIR/../custom/.zprofile" ]] || source "$ZDOTDIR/../custom/.zprofile"
