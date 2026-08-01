@@ -120,12 +120,14 @@ if [[ -z "${GID:-}" ]]; then
 fi
 
 # fpath
-for __fpath_item in {/run/host,}/usr{,local}/share/zsh/{vendor-completions,site-functions}; do
-	if [[ -z "${CONTAINER_ID:-${container:-}}" ]] && [[ "$__fpath_item" == /run/host/* ]]; then
-		continue
-	fi
+for __fpath_item in {/usr/share,/usr/local/share,${XDG_DATA_HOME:-$HOME/.local/share}}/zsh/{site-functions,vendor-completions}; do
 	if [[ -d "$__fpath_item/" ]]; then
 		fpath=("$__fpath_item" "${fpath[@]}")
+	fi
+	if [[ -n "${CONTAINER_ID:-${container:-}}" ]]; then
+		if [[ -d "/run/host$__fpath_item/" ]]; then
+			fpath=("/run/host$__fpath_item" "${fpath[@]}")
+		fi
 	fi
 done
 unset __fpath_item
