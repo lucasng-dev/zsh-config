@@ -56,7 +56,7 @@ fi
 echo '*** ZSH CONFIG ENABLE ***'
 zshenv_src="$(sed -E '/ZDOTDIR=/d' ~/.zshenv 2>/dev/null || true)"
 cat >~/.zshenv <<-EOF
-	export ZDOTDIR="${ZDOTDIR/$HOME/\$HOME}" && source "\$ZDOTDIR/.zshenv"
+	export ZDOTDIR="$ZDOTDIR" && source "\$ZDOTDIR/.zshenv"
 	$zshenv_src
 EOF
 echo '>>> OK <<<' && echo
