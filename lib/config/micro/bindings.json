@@ -1,4 +1,5 @@
 {
+  "Ctrl-r": "command-edit:replace",
   "F3": "FindNext",
   "Shift-F3": "FindPrevious"
 }
