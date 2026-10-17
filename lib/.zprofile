@@ -40,21 +40,16 @@ export ANDROID_USER_HOME="$HOME/.android"
 # path / manpath
 if [[ -o interactive ]]; then
 	__path=() && __manpath=()
-	__pnpm_bin="$PNPM_HOME/bin"
-	if [[ -d "$PNPM_HOME/" ]] && [[ ! -d "$PNPM_HOME/bin/" ]]; then
-		__pnpm_bin="$PNPM_HOME" # legacy v10 and below
-	fi
 	for __path_item in \
 		"$HOME/.local/bin" "$HOME/bin" \
 		"$CARGO_HOME/bin" \
 		"$GOPATH/bin" \
 		"$NPM_CONFIG_PREFIX/bin" \
-		"$__pnpm_bin" \
+		"$PNPM_HOME/bin" \
 		"$HOME/.dotnet/tools" \
 		"$ANDROID_HOME"/{tools,tools/bin,platform-tools}; do
 		[[ -d "$__path_item/" ]] && __path+=("$__path_item")
 	done
-	unset __pnpm_bin
 	path=("${__path[@]}" "${path[@]}")
 	manpath=("${__manpath[@]}" "${manpath[@]}")
 	unset __path __path_item __manpath
