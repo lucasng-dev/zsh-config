@@ -5,6 +5,7 @@
 
 # history
 export HISTFILE='/dev/null'
+export NODE_REPL_HISTORY=''
 
 # zsh options
 # shellcheck disable=SC2034
@@ -20,34 +21,12 @@ if [[ -z "${LANG:-}" ]] || [[ "${LANG:-}" == C.* ]] || [[ "${LANG:-}" != *.UTF-8
 	export LANG='en_US.UTF-8'
 fi
 
-# dev tools
-export CARGO_HOME="$HOME/.cargo"
-for GOPATH in "$HOME/go" "$HOME/.go"; do
-	[[ -d "$GOPATH/" ]] && break
-done
-export GOPATH
-export NPM_CONFIG_PREFIX="$HOME/.npm"
-export NPM_CONFIG_USERCONFIG="$HOME/.npmrc"
-export PNPM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/pnpm"
-export NODE_REPL_HISTORY=''
-export MAVEN_REPOSITORY="$HOME/.m2/repository"
-for ANDROID_HOME in "$HOME/Android/Sdk" "$HOME/Library/Android/sdk" "$HOME/.android/sdk"; do
-	[[ -d "$ANDROID_HOME/" ]] && break
-done
-export ANDROID_HOME
-export ANDROID_USER_HOME="$HOME/.android"
-
 # path / manpath
 if [[ -o interactive ]]; then
 	__path=() && __manpath=()
 	for __path_item in \
 		"$HOME/.local/bin" "$HOME/bin" \
-		"$CARGO_HOME/bin" \
-		"$GOPATH/bin" \
-		"$NPM_CONFIG_PREFIX/bin" \
-		"$PNPM_HOME/bin" \
-		"$HOME/.dotnet/tools" \
-		"$ANDROID_HOME"/{tools,tools/bin,platform-tools}; do
+		"${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims"; do
 		[[ -d "$__path_item/" ]] && __path+=("$__path_item")
 	done
 	path=("${__path[@]}" "${path[@]}")

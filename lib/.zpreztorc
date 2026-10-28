@@ -20,7 +20,6 @@ zstyle ':prezto:load' pmodule \
 	'_micro' \
 	'_finder' \
 	'_clipboard' \
-	'_direnv' \
 	'_mise' \
 	'_starship' \
 	'completion' \
