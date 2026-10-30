@@ -22,17 +22,15 @@ if [[ -z "${LANG:-}" ]] || [[ "${LANG:-}" == C.* ]] || [[ "${LANG:-}" != *.UTF-8
 fi
 
 # path / manpath
-if [[ -o interactive ]]; then
-	__path=() && __manpath=()
-	for __path_item in \
-		"$HOME/.local/bin" "$HOME/bin" \
-		"${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims"; do
-		[[ -d "$__path_item/" ]] && __path+=("$__path_item")
-	done
-	path=("${__path[@]}" "${path[@]}")
-	manpath=("${__manpath[@]}" "${manpath[@]}")
-	unset __path __path_item __manpath
-fi
+__path=() && __manpath=()
+for __path_item in \
+	"$HOME/.local/bin" "$HOME/bin" \
+	"${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims}"; do
+	[[ -d "$__path_item/" ]] && __path+=("$__path_item")
+done
+path=("${__path[@]}" "${path[@]}")
+manpath=("${__manpath[@]}" "${manpath[@]}")
+unset __path __path_item __manpath
 
 # concat / pager
 export LESS='-cgiKQnR'

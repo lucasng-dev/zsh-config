@@ -7,6 +7,7 @@ source "$ZDOTDIR/.zprezto/runcoms/zpreztorc"
 zstyle ':prezto:load' pmodule-dirs "$ZDOTDIR/modules"
 zstyle ':prezto:load' pmodule \
 	'environment' \
+	'_mise' \
 	'_tmux-ssh' \
 	'terminal' \
 	'editor' \
@@ -20,7 +21,6 @@ zstyle ':prezto:load' pmodule \
 	'_micro' \
 	'_finder' \
 	'_clipboard' \
-	'_mise' \
 	'_starship' \
 	'completion' \
 	'syntax-highlighting' \
