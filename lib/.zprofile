@@ -111,6 +111,17 @@ for __fpath_item in {/usr/share,/usr/local/share,${XDG_DATA_HOME:-$HOME/.local/s
 done
 unset __fpath_item
 
+# mise
+export MISE_MINIMUM_RELEASE_AGE='7d'
+
+# node
+export NPM_CONFIG_IGNORE_SCRIPTS='true'
+export NPM_CONFIG_MIN_RELEASE_AGE='7' # 7d
+export PNPM_CONFIG_IGNORE_SCRIPTS='true'
+export PNPM_CONFIG_MINIMUM_RELEASE_AGE='10080' # 7d
+export YARN_IGNORE_SCRIPTS='true'
+export YARN_NPM_MINIMAL_AGE_GATE='10080' # 7d
+
 # <<< end <<<
 
 [[ ! -s "$ZDOTDIR/../custom/.zprofile" ]] || source "$ZDOTDIR/../custom/.zprofile"
