@@ -288,7 +288,7 @@ function __box_configure() {
 	echo '*** REDIRECT HOST COMMANDS ***'
 	/usr/bin/distrobox-host-exec --yes true # download host-spawn
 	local host_cmd
-	for host_cmd in virsh docker{,-compose} podman{,-compose} minikube flatpak snap xdg-open gtk-launch gnome-terminal kgx ptyxis tilix konsole; do
+	for host_cmd in virsh docker{,-compose} podman{,-compose} minikube flatpak snap xdg-open gtk-launch gnome-terminal kgx ptyxis sbx tilix konsole; do
 		if __host_exec zsh -c "whence -p '$host_cmd'" &>/dev/null; then
 			echo "command: $host_cmd"
 			sudo ln -sfT /usr/bin/distrobox-host-exec "/usr/local/bin/$host_cmd"
